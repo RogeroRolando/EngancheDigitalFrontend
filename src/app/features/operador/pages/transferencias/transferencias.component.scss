@@ -1,0 +1,37 @@
+:host {
+  display: block;
+  padding: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-card {
+  margin-bottom: 20px;
+}
+
+.pendiente {
+  color: #ff9800;
+  font-weight: 500;
+}
+
+.completado {
+  color: #3e9341;
+  font-weight: 500;
+}
+
+.mat-column-acciones {
+  width: 120px;
+  text-align: center;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}

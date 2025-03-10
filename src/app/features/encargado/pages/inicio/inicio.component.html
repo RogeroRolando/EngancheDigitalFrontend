@@ -1,0 +1,96 @@
+<div class="dashboard-container">
+  <!-- Resumen General -->
+  <div class="summary-section">
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>Operadores Activos</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="big-number">{{operadoresActivos}}</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>Clientes Totales</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="big-number">{{clientesTotales}}</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>Transferencias Pendientes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="big-number warning">{{transferenciasPendientes}}</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Acciones Rápidas -->
+  <div class="actions-section">
+    <button mat-raised-button color="primary" (click)="navegarA('gestion-operadores')">
+      <mat-icon>group_add</mat-icon>
+      Gestionar Operadores
+    </button>
+    <button mat-raised-button color="accent" (click)="navegarA('gestion-clientes')">
+      <mat-icon>person_add</mat-icon>
+      Gestionar Clientes
+    </button>
+    <button mat-raised-button color="warn" (click)="navegarA('validacion-transferencias')">
+      <mat-icon>sync_alt</mat-icon>
+      Validar Transferencias
+    </button>
+  </div>
+
+  <!-- Tabla de Últimas Actividades -->
+  <mat-card class="activity-table-card">
+    <mat-card-header>
+      <mat-card-title>Últimas Actividades</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="actividades" class="mat-elevation-z8">
+        <!-- Fecha Column -->
+        <ng-container matColumnDef="fecha">
+          <th mat-header-cell *matHeaderCellDef> Fecha </th>
+          <td mat-cell *matCellDef="let element"> {{element.fecha}} </td>
+        </ng-container>
+
+        <!-- Operador Column -->
+        <ng-container matColumnDef="operador">
+          <th mat-header-cell *matHeaderCellDef> Operador </th>
+          <td mat-cell *matCellDef="let element"> {{element.operador}} </td>
+        </ng-container>
+
+        <!-- Cliente Column -->
+        <ng-container matColumnDef="cliente">
+          <th mat-header-cell *matHeaderCellDef> Cliente </th>
+          <td mat-cell *matCellDef="let element"> {{element.cliente}} </td>
+        </ng-container>
+
+        <!-- Tipo Column -->
+        <ng-container matColumnDef="tipo">
+          <th mat-header-cell *matHeaderCellDef> Tipo </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.tipo}}
+          </td>
+        </ng-container>
+
+        <!-- Estado Column -->
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef> Estado </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="{{element.estado === 'Pendiente' ? 'estado-pendiente' : 'estado-completado'}}">
+              {{element.estado}}
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>

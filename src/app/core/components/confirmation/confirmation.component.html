@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+    {{data.message | titlecase}}
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-stroked-button color="secondary" (click)="onClose(false)">{{data.reject}}</button>
+    @if (data.accept) {
+        <button mat-stroked-button color="primary" (click)="onClose(true)">{{data.accept}}</button>
+    }
+</mat-dialog-actions>

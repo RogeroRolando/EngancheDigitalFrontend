@@ -1,0 +1,35 @@
+.mat-expansion-panel {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.mat-expansion-panel-header {
+  padding: 0 16px;
+}
+
+.mat-expansion-panel-header-title {
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+mat-nav-list {
+  padding: 0;
+}
+
+a.mat-list-item {
+  font-size: 14px;
+  height: 48px;
+  padding: 0 16px;
+  color: rgba(0, 0, 0, 0.87);
+  
+  &.active {
+    background-color: rgba(0, 0, 0, 0.04);
+    color: #1a237e;
+    font-weight: 500;
+  }
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+}

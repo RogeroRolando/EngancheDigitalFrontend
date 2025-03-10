@@ -1,0 +1,30 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>Validar Transferencia</h2>
+  
+  <mat-dialog-content>
+    <div class="info-section">
+      <p><strong>Cliente:</strong> {{ data.cliente }}</p>
+      <p><strong>Operador:</strong> {{ data.operador }}</p>
+      <p><strong>Importe:</strong> {{ data.importe | currency:'USD':'symbol-narrow' }}</p>
+      <p><strong>Fecha:</strong> {{ data.fecha }}</p>
+    </div>
+
+    <div class="comprobante-section">
+      <h3>Comprobante de Transferencia</h3>
+      <div class="image-container">
+        <img [src]="data.comprobante" 
+             [alt]="'Comprobante de ' + data.cliente"
+             (error)="handleImageError($event)">
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <button mat-raised-button 
+            color="primary" 
+            (click)="onValidate()">
+      Validar
+    </button>
+  </mat-dialog-actions>
+</div>

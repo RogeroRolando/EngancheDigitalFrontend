@@ -1,0 +1,11 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <span>{{title}}</span>
+        <span class="example-spacer"></span>
+        @if (isLogin()) {
+        <a mat-button matTooltip="click para salir" (click)="onLogout()">{{ username() }}</a>
+        }@else {
+        <a mat-button matTooltip="click para salir" (click)="onLogin()">Iniciar Sesión</a>
+        }
+    </mat-toolbar-row>
+</mat-toolbar>

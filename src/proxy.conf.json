@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "http://censo-backend.hipodromo.local",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

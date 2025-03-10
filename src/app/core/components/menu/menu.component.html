@@ -1,0 +1,16 @@
+<mat-nav-list>
+  @for (module of modules; track module.name) {
+    <mat-expansion-panel class="mat-elevation-z0" expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{module.name | titlecase}}</mat-panel-title>
+      </mat-expansion-panel-header>
+      @for (menu of module.menus; track menu.id) {
+        <a mat-list-item 
+           [routerLink]="generateRoute(module.name, menu.name)"
+           routerLinkActive="active">
+           {{menu.displayName}}
+        </a>
+      }
+    </mat-expansion-panel>
+  }
+</mat-nav-list>

@@ -1,0 +1,38 @@
+// Estilos compartidos para formularios en diálogos
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .file-upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .upload-button {
+      width: fit-content;
+    }
+
+    .file-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  mat-error {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+// Estilos para inputs numéricos
+.number-input {
+  text-align: right;
+}
