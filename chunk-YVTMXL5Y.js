@@ -1,0 +1,1 @@
+import{Y as i,ga as n,id as o,ld as a}from"./chunk-762MKMLP.js";var D=(()=>{let e=class e{};e.\u0275fac=function(s){return new(s||e)},e.\u0275mod=n({type:e}),e.\u0275inj=i({imports:[o,a,a]});let t=e;return t})();export{D as a};
