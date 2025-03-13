@@ -59,15 +59,15 @@
     <mat-card-content>
       <table mat-table [dataSource]="dataSource">
         <!-- Fecha Column -->
-        <ng-container matColumnDef="fechaHora">
+        <ng-container matColumnDef="fecha">
           <th mat-header-cell *matHeaderCellDef> Fecha y Hora </th>
-          <td mat-cell *matCellDef="let element"> {{element.fechaHora | date:'short'}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.fecha | date:'short'}} </td>
         </ng-container>
 
         <!-- Monto Column -->
-        <ng-container matColumnDef="monto">
+        <ng-container matColumnDef="importe">
           <th mat-header-cell *matHeaderCellDef> Monto </th>
-          <td mat-cell *matCellDef="let element"> {{element.monto | number:'1.0-0'}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.importe | number:'1.0-0'}} </td>
         </ng-container>
 
         <!-- Estado Column -->

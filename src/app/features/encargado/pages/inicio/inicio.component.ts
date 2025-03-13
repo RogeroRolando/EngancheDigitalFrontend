@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,14 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
 import { Router } from '@angular/router';
-
-interface Actividad {
-  fecha: string;
-  operador: string;
-  cliente: string;
-  tipo: string;
-  estado: string;
-}
+import { EngancheService, Actividad } from '@core/services/enganche.service';
 
 @Component({
   selector: 'app-inicio-encargado',
@@ -164,37 +157,33 @@ interface Actividad {
     }
   `]
 })
-export class InicioComponent {
-  operadoresActivos: number = 5;
-  clientesTotales: number = 120;
-  transferenciasPendientes: number = 8;
+export class InicioComponent implements OnInit {
+  operadoresActivos: number = 0;
+  clientesTotales: number = 0;
+  transferenciasPendientes: number = 0;
   displayedColumns: string[] = ['fecha', 'operador', 'cliente', 'tipo', 'estado'];
+  actividades: Actividad[] = [];
 
-  actividades: Actividad[] = [
-    {
-      fecha: '2024-02-25 14:30',
-      operador: 'Juan Pérez',
-      cliente: 'Cliente A',
-      tipo: 'Transferencia',
-      estado: 'Pendiente'
-    },
-    {
-      fecha: '2024-02-25 13:15',
-      operador: 'María López',
-      cliente: 'Cliente B',
-      tipo: 'Registro',
-      estado: 'Completado'
-    },
-    {
-      fecha: '2024-02-25 12:45',
-      operador: 'Carlos Ruiz',
-      cliente: 'Cliente C',
-      tipo: 'Transferencia',
-      estado: 'Completado'
-    }
-  ];
+  constructor(
+    private router: Router,
+    private engancheService: EngancheService
+  ) {}
 
-  constructor(private router: Router) {}
+  ngOnInit(): void {
+    this.cargarDatos();
+  }
+
+  private cargarDatos(): void {
+    this.engancheService.getDashboardEncargadoStats().subscribe(stats => {
+      this.operadoresActivos = stats.operadoresActivos;
+      this.clientesTotales = stats.clientesTotales;
+      this.transferenciasPendientes = stats.transferenciasPendientes;
+    });
+
+    this.engancheService.getActividades().subscribe(actividades => {
+      this.actividades = actividades;
+    });
+  }
 
   navegarA(ruta: string) {
     this.router.navigate(['/encargado', ruta]);

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,15 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AgregarTransferenciaDialogComponent } from './dialogs/agregar-transferencia-dialog.component';
 import { VerComprobanteDialogComponent } from './dialogs/ver-comprobante-dialog.component';
 import { ClpPipe } from '@core/pipes/clp.pipe';
-
-interface Transferencia {
-  id: number;
-  fecha: string;
-  cliente: string;
-  importe: number;
-  estado: 'Pendiente' | 'Completado';
-  comprobante?: string;
-}
+import { EngancheService, Transferencia } from '@core/services/enganche.service';
 
 @Component({
   selector: 'app-transferencias',
@@ -35,53 +27,42 @@ interface Transferencia {
   templateUrl: './transferencias.component.html',
   styleUrls: ['./transferencias.component.scss']
 })
-export class TransferenciasComponent {
+export class TransferenciasComponent implements OnInit {
   displayedColumns: string[] = ['fecha', 'cliente', 'importe', 'estado', 'acciones'];
-  
-  transferencias: Transferencia[] = [
-    {
-      id: 1,
-      fecha: '2024-02-25 14:30',
-      cliente: 'Cliente A',
-      importe: 150000,
-      estado: 'Pendiente'
-    },
-    {
-      id: 2,
-      fecha: '2024-02-25 13:15',
-      cliente: 'Cliente B',
-      importe: 250000,
-      estado: 'Completado',
-      comprobante: 'assets/images/comprobante1.jpg'
-    },
-    {
-      id: 3,
-      fecha: '2024-02-25 12:45',
-      cliente: 'Cliente C',
-      importe: 350000,
-      estado: 'Completado',
-      comprobante: 'assets/images/comprobante2.jpg'
-    }
-  ];
+  transferencias: Transferencia[] = [];
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private engancheService: EngancheService
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarTransferencias();
+  }
+
+  private cargarTransferencias(): void {
+    this.engancheService.getTransferencias().subscribe(transferencias => {
+      this.transferencias = transferencias;
+    });
+  }
 
   agregarTransferencia() {
     const dialogRef = this.dialog.open(AgregarTransferenciaDialogComponent);
     
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Aquí se procesaría el guardado en el backend
-        const nuevaTransferencia: Transferencia = {
-          id: this.transferencias.length + 1,
+        const nuevaTransferencia: Omit<Transferencia, 'id'> = {
           fecha: new Date().toLocaleString(),
-          cliente: result.cliente.nombre, // Ahora usamos el nombre del objeto cliente
+          cliente: result.cliente.nombre,
           importe: result.importe,
           estado: 'Pendiente',
           comprobante: URL.createObjectURL(result.comprobante)
         };
         
-        this.transferencias = [nuevaTransferencia, ...this.transferencias];
+        this.engancheService.agregarTransferencia(nuevaTransferencia)
+          .subscribe(transferencia => {
+            this.transferencias = [transferencia, ...this.transferencias];
+          });
       }
     });
   }
