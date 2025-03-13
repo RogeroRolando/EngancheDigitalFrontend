@@ -1,18 +1,41 @@
 <div class="container">
-  <!-- Estadísticas -->
-  <div class="stats-container">
-    <div class="stat-card">
-      <div class="stat-value pending">{{estadisticas.pendientes}}</div>
-      <div class="stat-label">Pendientes</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value completed">{{estadisticas.completados}}</div>
-      <div class="stat-label">Completados</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value rejected">{{estadisticas.rechazados}}</div>
-      <div class="stat-label">Rechazados</div>
-    </div>
+  <!-- Tarjetas de Estadísticas -->
+  <div class="summary-cards">
+    <mat-card class="summary-card pending-card">
+      <mat-card-content>
+        <div class="card-icon">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <div class="card-content">
+          <div class="title">Transferencias Pendientes</div>
+          <div class="value pending">{{estadisticas.pendientes}}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card completed-card">
+      <mat-card-content>
+        <div class="card-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="card-content">
+          <div class="title">Transferencias Completadas</div>
+          <div class="value completed">{{estadisticas.completados}}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card rejected-card">
+      <mat-card-content>
+        <div class="card-icon">
+          <mat-icon>cancel</mat-icon>
+        </div>
+        <div class="card-content">
+          <div class="title">Transferencias Rechazadas</div>
+          <div class="value rejected">{{estadisticas.rechazados}}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 
   <!-- Filtros -->
@@ -41,9 +64,11 @@
 
         <div class="button-container">
           <button mat-raised-button color="primary" (click)="buscarTransferencias()">
+            <mat-icon>search</mat-icon>
             Buscar
           </button>
           <button mat-button (click)="limpiarFiltros()" [disabled]="!clienteSeleccionado && !fechaSeleccionada">
+            <mat-icon>clear</mat-icon>
             Limpiar
           </button>
         </div>

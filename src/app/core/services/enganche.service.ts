@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
 export type EstadoTransferencia = 'Pendiente' | 'Completado' | 'Rechazado';
@@ -63,6 +64,7 @@ export interface TransferenciaStats {
   providedIn: 'root'
 })
 export class EngancheService {
+  private apiUrl = 'http://localhost:3000/api'; // URL base de la API
   private transferencias: Transferencia[] = [
     {
       id: 1,
@@ -222,7 +224,7 @@ export class EngancheService {
     totalTransferido: 25000
   };
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   // Métodos para Transferencias
   getTransferencias(): Observable<Transferencia[]> {

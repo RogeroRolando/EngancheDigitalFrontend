@@ -1,18 +1,41 @@
 <div class="dashboard-container">
   <!-- Resumen de Actividad -->
   <div class="summary-cards">
-    <div class="summary-card">
-      <div class="title">Operadores Activos</div>
-      <div class="value" style="color: #3f51b5;">{{operadoresActivos}}</div>
-    </div>
-    <div class="summary-card">
-      <div class="title">Clientes Totales</div>
-      <div class="value" style="color: #3f51b5;">{{activeClients}}</div>
-    </div>
-    <div class="summary-card">
-      <div class="title">Transferencias Pendientes</div>
-      <div class="value" style="color: #f44336;">{{pendingTransfers}}</div>
-    </div>
+    <mat-card class="summary-card operators-card">
+      <mat-card-content>
+        <div class="card-icon">
+          <mat-icon>group</mat-icon>
+        </div>
+        <div class="card-content">
+          <div class="title">Operadores Activos</div>
+          <div class="value">{{operadoresActivos}}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card clients-card">
+      <mat-card-content>
+        <div class="card-icon">
+          <mat-icon>people</mat-icon>
+        </div>
+        <div class="card-content">
+          <div class="title">Clientes Totales</div>
+          <div class="value">{{activeClients}}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card pending-card">
+      <mat-card-content>
+        <div class="card-icon">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <div class="card-content">
+          <div class="title">Transferencias Pendientes</div>
+          <div class="value">{{pendingTransfers}}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 
   <!-- Tabla de Transferencias -->
@@ -24,26 +47,26 @@
       <table mat-table [dataSource]="transferencias" class="mat-elevation-z8">
         <!-- Fecha Column -->
         <ng-container matColumnDef="fecha">
-          <th mat-header-cell *matHeaderCellDef class="mat-column-fecha"> Fecha </th>
-          <td mat-cell *matCellDef="let element" class="mat-column-fecha"> {{element.fecha | date:'short'}} </td>
+          <th mat-header-cell *matHeaderCellDef> Fecha </th>
+          <td mat-cell *matCellDef="let element"> {{element.fecha | date:'short'}} </td>
         </ng-container>
 
         <!-- Cliente Column -->
         <ng-container matColumnDef="cliente">
-          <th mat-header-cell *matHeaderCellDef class="mat-column-cliente"> Cliente </th>
-          <td mat-cell *matCellDef="let element" class="mat-column-cliente"> {{element.cliente}} </td>
+          <th mat-header-cell *matHeaderCellDef> Cliente </th>
+          <td mat-cell *matCellDef="let element"> {{element.cliente}} </td>
         </ng-container>
 
         <!-- Monto Column -->
         <ng-container matColumnDef="importe">
-          <th mat-header-cell *matHeaderCellDef class="mat-column-importe"> Monto </th>
-          <td mat-cell *matCellDef="let element" class="mat-column-importe"> {{element.importe | number:'1.0-0'}} </td>
+          <th mat-header-cell *matHeaderCellDef> Monto </th>
+          <td mat-cell *matCellDef="let element"> {{element.importe | number:'1.0-0'}} </td>
         </ng-container>
 
         <!-- Estado Column -->
         <ng-container matColumnDef="estado">
-          <th mat-header-cell *matHeaderCellDef class="mat-column-estado"> Estado </th>
-          <td mat-cell *matCellDef="let element" class="mat-column-estado">
+          <th mat-header-cell *matHeaderCellDef> Estado </th>
+          <td mat-cell *matCellDef="let element">
             <span [class]="'status-badge ' + element.estado.toLowerCase()">
               {{element.estado}}
             </span>
@@ -52,8 +75,8 @@
 
         <!-- Acciones Column -->
         <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef class="mat-column-acciones"> Acciones </th>
-          <td mat-cell *matCellDef="let element" class="mat-column-acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let element">
             <button mat-icon-button color="primary" (click)="verComprobante(element)" matTooltip="Ver comprobante">
               <mat-icon>visibility</mat-icon>
             </button>
