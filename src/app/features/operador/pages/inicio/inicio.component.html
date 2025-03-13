@@ -1,30 +1,4 @@
 <div class="dashboard-container">
-  <!-- Selector de Cliente y Fecha -->
-  <mat-card class="selector-card">
-    <mat-card-header>
-      <mat-card-title>Selección de Cliente y Fecha</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="selector-form">
-        <mat-form-field appearance="outline">
-          <mat-label>Cliente</mat-label>
-          <mat-select [(ngModel)]="selectedClient" name="client">
-            <mat-option *ngFor="let client of clients" [value]="client.id">
-              {{client.name}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Fecha</mat-label>
-          <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" name="date">
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-      </div>
-    </mat-card-content>
-  </mat-card>
-
   <!-- Resumen de Actividad -->
   <div class="summary-cards">
     <div class="summary-card">
@@ -91,9 +65,4 @@
       </table>
     </mat-card-content>
   </mat-card>
-
-  <!-- Botón Flotante para Nueva Transferencia -->
-  <button mat-fab color="primary" class="fab-button" (click)="nuevaTransferencia()">
-    <mat-icon>add</mat-icon>
-  </button>
 </div>

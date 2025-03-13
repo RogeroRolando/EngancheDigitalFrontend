@@ -51,6 +51,11 @@ export class MenuComponent implements OnInit {
           id: '2',
           name: 'transferencias',
           displayName: 'Mis Transferencias'
+        },
+        {
+          id: '3',
+          name: 'clientes',
+          displayName: 'Clientes'
         }
       ]
     }
