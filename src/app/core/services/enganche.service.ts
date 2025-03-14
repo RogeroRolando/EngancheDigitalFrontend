@@ -158,23 +158,116 @@ export class EngancheService {
   ];
 
   private transferenciasValidacion: Transferencia[] = [
+    // 4 Transferencias Pendientes
     {
       id: 1,
-      fecha: '2024-01-15',
+      fecha: '2025-03-14 09:30',
       operador: 'Juan Pérez',
       cliente: 'Carlos Rodríguez',
-      importe: 1500.00,
+      importe: 150000,
       estado: 'Pendiente',
       comprobante: './assets/images/comprobante1.jpg'
     },
     {
       id: 2,
-      fecha: '2024-01-14',
-      operador: 'María García',
-      cliente: 'Ana López',
-      importe: 2300.50,
-      estado: 'Completado',
+      fecha: '2025-03-14 09:15',
+      operador: 'María López',
+      cliente: 'Ana Silva',
+      importe: 230000,
+      estado: 'Pendiente',
       comprobante: './assets/images/comprobante2.jpg'
+    },
+    {
+      id: 3,
+      fecha: '2025-03-14 09:00',
+      operador: 'Carlos Ruiz',
+      cliente: 'Pedro Martínez',
+      importe: 180000,
+      estado: 'Pendiente',
+      comprobante: './assets/images/comprobante3.jpg'
+    },
+    {
+      id: 4,
+      fecha: '2025-03-14 08:45',
+      operador: 'Juan Pérez',
+      cliente: 'María González',
+      importe: 120000,
+      estado: 'Pendiente',
+      comprobante: './assets/images/comprobante4.jpg'
+    },
+    // 3 Transferencias Completadas
+    {
+      id: 5,
+      fecha: '2025-03-14 08:30',
+      operador: 'María López',
+      cliente: 'Luis Sánchez',
+      importe: 90000,
+      estado: 'Completado',
+      comprobante: './assets/images/comprobante5.jpg'
+    },
+    {
+      id: 6,
+      fecha: '2025-03-14 08:15',
+      operador: 'Carlos Ruiz',
+      cliente: 'Ana Torres',
+      importe: 175000,
+      estado: 'Completado',
+      comprobante: './assets/images/comprobante6.jpg'
+    },
+    {
+      id: 7,
+      fecha: '2025-03-14 08:00',
+      operador: 'Juan Pérez',
+      cliente: 'Jorge Muñoz',
+      importe: 145000,
+      estado: 'Completado',
+      comprobante: './assets/images/comprobante7.jpg'
+    },
+    // 5 Transferencias Rechazadas
+    {
+      id: 8,
+      fecha: '2025-03-14 07:45',
+      operador: 'María López',
+      cliente: 'Carmen Rojas',
+      importe: 200000,
+      estado: 'Rechazado',
+      comprobante: './assets/images/comprobante8.jpg'
+    },
+    {
+      id: 9,
+      fecha: '2025-03-14 07:30',
+      operador: 'Carlos Ruiz',
+      cliente: 'Roberto Díaz',
+      importe: 160000,
+      estado: 'Rechazado',
+      comprobante: './assets/images/comprobante9.jpg'
+    },
+    {
+      id: 10,
+      fecha: '2025-03-14 07:15',
+      operador: 'Juan Pérez',
+      cliente: 'Patricia Vega',
+      importe: 135000,
+      estado: 'Rechazado',
+      comprobante: './assets/images/comprobante10.jpg'
+    },
+    {
+      id: 11,
+      fecha: '2025-03-14 07:00',
+      operador: 'María López',
+      cliente: 'Fernando Castro',
+      importe: 190000,
+      estado: 'Rechazado',
+      comprobante: './assets/images/comprobante11.jpg'
+    },
+    {
+      id: 12,
+      fecha: '2025-03-14 06:45',
+      operador: 'Carlos Ruiz',
+      cliente: 'Laura Vargas',
+      importe: 170000,
+      estado: 'Rechazado',
+      comprobante: './assets/images/comprobante12.jpg'
     }
   ];
 

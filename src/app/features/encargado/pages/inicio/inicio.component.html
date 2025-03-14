@@ -1,99 +1,92 @@
 <div class="dashboard-container">
-  <!-- Resumen General -->
   <div class="summary-section">
-    <div class="status-card pending" @fadeInUp>
+    <!-- Transferencias Pendientes -->
+    <mat-card class="status-card pending" (click)="irAValidarTransferencias()" @fadeInUp>
       <div class="card-content">
         <div class="icon-container">
           <mat-icon>schedule</mat-icon>
         </div>
         <div class="info-container">
-          <div class="number">{{transferenciasPendientes}}</div>
+          <div class="number">{{ stats.pendientes }}</div>
           <div class="label">Transferencias Pendientes</div>
         </div>
       </div>
-    </div>
+    </mat-card>
 
-    <div class="status-card completed" @fadeInUp>
+    <!-- Transferencias Completadas -->
+    <mat-card class="status-card completed" (click)="irAValidarTransferencias()" @fadeInUp>
       <div class="card-content">
         <div class="icon-container">
           <mat-icon>check_circle</mat-icon>
         </div>
         <div class="info-container">
-          <div class="number">{{operadoresActivos}}</div>
+          <div class="number">{{ stats.completados }}</div>
           <div class="label">Transferencias Completadas</div>
         </div>
       </div>
-    </div>
+    </mat-card>
 
-    <div class="status-card rejected" @fadeInUp>
+    <!-- Transferencias Rechazadas -->
+    <mat-card class="status-card rejected" (click)="irAValidarTransferencias()" @fadeInUp>
       <div class="card-content">
         <div class="icon-container">
           <mat-icon>cancel</mat-icon>
         </div>
         <div class="info-container">
-          <div class="number">{{clientesTotales}}</div>
+          <div class="number">{{ stats.rechazados }}</div>
           <div class="label">Transferencias Rechazadas</div>
         </div>
       </div>
-    </div>
+    </mat-card>
   </div>
 
-  <!-- Acciones Rápidas -->
   <div class="actions-section">
-    <button mat-raised-button color="primary" (click)="navegarA('gestion-operadores')" @scaleIn>
-      <mat-icon>group_add</mat-icon>
-      Gestionar Operadores
-    </button>
-    <button mat-raised-button color="accent" (click)="navegarA('gestion-clientes')" @scaleIn>
-      <mat-icon>person_add</mat-icon>
-      Gestionar Clientes
-    </button>
-    <button mat-raised-button color="warn" (click)="navegarA('validacion-transferencias')" @scaleIn>
-      <mat-icon>sync_alt</mat-icon>
+    <button mat-raised-button color="primary" (click)="irAValidarTransferencias()">
+      <mat-icon>receipt_long</mat-icon>
       Validar Transferencias
     </button>
+    <button mat-raised-button color="accent" (click)="irAGestionarOperadores()">
+      <mat-icon>group</mat-icon>
+      Gestionar Operadores
+    </button>
+    <button mat-raised-button color="warn" (click)="irAGestionarClientes()">
+      <mat-icon>people</mat-icon>
+      Gestionar Clientes
+    </button>
   </div>
 
-  <!-- Tabla de Últimas Actividades -->
-  <mat-card class="activity-table-card" @fadeInUp>
+  <mat-card class="activity-table-card" @scaleIn>
     <mat-card-header>
-      <mat-card-title>Últimas Actividades</mat-card-title>
+      <mat-card-title>Actividades Recientes</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <table mat-table [dataSource]="actividades" class="mat-elevation-z8">
-        <!-- Fecha Column -->
+      <table mat-table [dataSource]="actividades">
         <ng-container matColumnDef="fecha">
-          <th mat-header-cell *matHeaderCellDef> Fecha </th>
-          <td mat-cell *matCellDef="let element"> {{element.fecha}} </td>
+          <th mat-header-cell *matHeaderCellDef>Fecha</th>
+          <td mat-cell *matCellDef="let actividad">{{ actividad.fecha }}</td>
         </ng-container>
 
-        <!-- Operador Column -->
         <ng-container matColumnDef="operador">
-          <th mat-header-cell *matHeaderCellDef> Operador </th>
-          <td mat-cell *matCellDef="let element"> {{element.operador}} </td>
+          <th mat-header-cell *matHeaderCellDef>Operador</th>
+          <td mat-cell *matCellDef="let actividad">{{ actividad.operador }}</td>
         </ng-container>
 
-        <!-- Cliente Column -->
         <ng-container matColumnDef="cliente">
-          <th mat-header-cell *matHeaderCellDef> Cliente </th>
-          <td mat-cell *matCellDef="let element"> {{element.cliente}} </td>
+          <th mat-header-cell *matHeaderCellDef>Cliente</th>
+          <td mat-cell *matCellDef="let actividad">{{ actividad.cliente }}</td>
         </ng-container>
 
-        <!-- Tipo Column -->
         <ng-container matColumnDef="tipo">
-          <th mat-header-cell *matHeaderCellDef> Tipo </th>
-          <td mat-cell *matCellDef="let element"> {{element.tipo}} </td>
+          <th mat-header-cell *matHeaderCellDef>Tipo</th>
+          <td mat-cell *matCellDef="let actividad">{{ actividad.tipo }}</td>
         </ng-container>
 
-        <!-- Estado Column -->
         <ng-container matColumnDef="estado">
-          <th mat-header-cell *matHeaderCellDef> Estado </th>
-          <td mat-cell *matCellDef="let element">
-            <div class="estado-chip" [class.pendiente]="element.estado.toLowerCase() === 'pendiente'"
-                                   [class.completado]="element.estado.toLowerCase() === 'completado'"
-                                   [class.rechazado]="element.estado.toLowerCase() === 'rechazado'">
-              <mat-icon>{{getEstadoIcon(element.estado)}}</mat-icon>
-              {{element.estado}}
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let actividad">
+            <div class="estado-chip" [ngClass]="actividad.estado.toLowerCase()">
+              <mat-icon>{{ getEstadoIcon(actividad.estado) }}</mat-icon>
+              {{ actividad.estado }}
             </div>
           </td>
         </ng-container>

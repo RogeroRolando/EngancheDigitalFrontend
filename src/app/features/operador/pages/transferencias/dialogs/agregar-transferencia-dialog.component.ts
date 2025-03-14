@@ -13,11 +13,7 @@ import { BaseDialogComponent } from '@core/components/base-dialog/base-dialog.co
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { ElementRef, ViewChild } from '@angular/core';
-
-interface Cliente {
-  id: number;
-  nombre: string;
-}
+import { EngancheService, Cliente } from '@core/services/enganche.service';
 
 @Component({
   selector: 'app-agregar-transferencia-dialog',
@@ -52,7 +48,7 @@ interface Cliente {
                           [autoActiveFirstOption]="false"
                           (opened)="false">
             <mat-option *ngFor="let cliente of filteredClientes$ | async" [value]="cliente">
-              {{cliente.nombre}}
+              {{cliente.nombre}} - {{cliente.rut}}
             </mat-option>
           </mat-autocomplete>
           <mat-error *ngIf="form.get('cliente')?.hasError('required') && form.get('cliente')?.touched">
@@ -196,17 +192,13 @@ interface Cliente {
 export class AgregarTransferenciaDialogComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<AgregarTransferenciaDialogComponent>);
   private fb = inject(FormBuilder);
+  private engancheService = inject(EngancheService);
 
   @ViewChild('clienteInput') clienteInput!: ElementRef;
 
   form: FormGroup;
   selectedFileName: string = '';
-  clientes: Cliente[] = [
-    { id: 1, nombre: 'Cliente A' },
-    { id: 2, nombre: 'Cliente B' },
-    { id: 3, nombre: 'Cliente C' }
-  ];
-
+  clientes: Cliente[] = [];
   filteredClientes$: Observable<Cliente[]>;
 
   constructor() {
@@ -214,6 +206,10 @@ export class AgregarTransferenciaDialogComponent implements OnInit {
       cliente: [null, Validators.required],
       importe: [null, [Validators.required, Validators.min(1)]],
       comprobante: [null, Validators.required]
+    });
+
+    this.engancheService.getClientes().subscribe(clientes => {
+      this.clientes = clientes.filter(cliente => cliente.activo);
     });
 
     this.filteredClientes$ = this.form.get('cliente')!.valueChanges.pipe(
@@ -227,7 +223,10 @@ export class AgregarTransferenciaDialogComponent implements OnInit {
 
   private _filter(nombre: string): Cliente[] {
     const filterValue = nombre.toLowerCase();
-    return this.clientes.filter(cliente => cliente.nombre.toLowerCase().includes(filterValue));
+    return this.clientes.filter(cliente => 
+      cliente.nombre.toLowerCase().includes(filterValue) || 
+      cliente.rut?.toLowerCase().includes(filterValue)
+    );
   }
 
   ngOnInit() {
@@ -240,7 +239,7 @@ export class AgregarTransferenciaDialogComponent implements OnInit {
   }
 
   displayFn(cliente: Cliente): string {
-    return cliente ? cliente.nombre : '';
+    return cliente ? `${cliente.nombre} - ${cliente.rut}` : '';
   }
 
   onFileSelected(event: Event) {
