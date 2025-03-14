@@ -12,7 +12,7 @@
       <!-- Fecha Column -->
       <ng-container matColumnDef="fecha">
         <th mat-header-cell *matHeaderCellDef>Fecha</th>
-        <td mat-cell *matCellDef="let element">{{element.fecha}}</td>
+        <td mat-cell *matCellDef="let element">{{element.fecha | date:'dd/MM/yyyy HH:mm'}}</td>
       </ng-container>
 
       <!-- Cliente Column -->
@@ -24,14 +24,20 @@
       <!-- Importe Column -->
       <ng-container matColumnDef="importe">
         <th mat-header-cell *matHeaderCellDef>Importe</th>
-        <td mat-cell *matCellDef="let element">{{element.importe | clp}}</td>
+        <td mat-cell *matCellDef="let element">${{element.importe | clp}}</td>
       </ng-container>
 
       <!-- Estado Column -->
       <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef>Estado</th>
-        <td mat-cell *matCellDef="let element" [class]="element.estado.toLowerCase()">
-          {{element.estado}}
+        <td mat-cell *matCellDef="let element">
+          <div class="estado-chip" 
+               [class.pendiente]="element.estado.toLowerCase() === 'pendiente'"
+               [class.completado]="element.estado.toLowerCase() === 'completado'"
+               [class.rechazado]="element.estado.toLowerCase() === 'rechazado'">
+            <mat-icon>{{getEstadoIcon(element.estado)}}</mat-icon>
+            {{element.estado}}
+          </div>
         </td>
       </ng-container>
 
@@ -39,14 +45,20 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef>Acciones</th>
         <td mat-cell *matCellDef="let element">
-          <button mat-icon-button color="primary" (click)="verTransferencia(element)" 
-                  matTooltip="Ver comprobante" *ngIf="element.comprobante">
-            <mat-icon>visibility</mat-icon>
-          </button>
-          <button mat-icon-button color="accent" (click)="editarTransferencia(element)" 
-                  matTooltip="Editar" *ngIf="element.estado === 'Pendiente'">
-            <mat-icon>edit</mat-icon>
-          </button>
+          <div class="acciones-cell">
+            <button mat-mini-fab color="primary" 
+                    (click)="verTransferencia(element)" 
+                    matTooltip="Ver comprobante" 
+                    *ngIf="element.comprobante">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-mini-fab color="accent" 
+                    (click)="editarTransferencia(element)" 
+                    matTooltip="Editar" 
+                    *ngIf="element.estado === 'Pendiente'">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
         </td>
       </ng-container>
 

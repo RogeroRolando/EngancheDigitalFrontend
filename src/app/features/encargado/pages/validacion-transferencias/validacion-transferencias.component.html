@@ -4,44 +4,56 @@
   </mat-card-header>
   <mat-card-content>
     <table mat-table [dataSource]="transferencias" class="mat-elevation-z8">
+      <!-- Fecha Column -->
       <ng-container matColumnDef="fecha">
         <th mat-header-cell *matHeaderCellDef> Fecha </th>
-        <td mat-cell *matCellDef="let row"> {{ row.fecha | date:'short' }} </td>
+        <td mat-cell *matCellDef="let row"> {{ row.fecha | date:'dd/MM/yyyy HH:mm' }} </td>
       </ng-container>
 
+      <!-- Operador Column -->
       <ng-container matColumnDef="operador">
         <th mat-header-cell *matHeaderCellDef> Operador </th>
         <td mat-cell *matCellDef="let row"> {{ row.operador }} </td>
       </ng-container>
 
+      <!-- Cliente Column -->
       <ng-container matColumnDef="cliente">
         <th mat-header-cell *matHeaderCellDef> Cliente </th>
         <td mat-cell *matCellDef="let row"> {{ row.cliente }} </td>
       </ng-container>
 
+      <!-- Importe Column -->
       <ng-container matColumnDef="importe">
         <th mat-header-cell *matHeaderCellDef> Importe </th>
-        <td mat-cell *matCellDef="let row"> {{ row.importe | number:'1.0-0' }} </td>
+        <td mat-cell *matCellDef="let row"> ${{ row.importe | number:'1.0-0' }} </td>
       </ng-container>
 
+      <!-- Estado Column -->
       <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef> Estado </th>
         <td mat-cell *matCellDef="let row">
-          <span [class]="'status-badge ' + row.estado.toLowerCase()">
+          <div class="estado-chip" 
+               [class.pendiente]="row.estado.toLowerCase() === 'pendiente'"
+               [class.completado]="row.estado.toLowerCase() === 'completado'"
+               [class.rechazado]="row.estado.toLowerCase() === 'rechazado'">
+            <mat-icon>{{getEstadoIcon(row.estado)}}</mat-icon>
             {{ row.estado }}
-          </span>
+          </div>
         </td>
       </ng-container>
 
+      <!-- Acciones Column -->
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let row">
-          <button mat-icon-button color="primary" 
-                  (click)="abrirDialogoValidacion(row)"
-                  [disabled]="row.estado === 'Completado'"
-                  matTooltip="Ver comprobante y validar">
-            <mat-icon>visibility</mat-icon>
-          </button>
+          <div class="acciones-cell">
+            <button mat-mini-fab color="primary" 
+                    (click)="abrirDialogoValidacion(row)"
+                    [disabled]="row.estado.toLowerCase() === 'completado'"
+                    matTooltip="Ver comprobante y validar">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </div>
         </td>
       </ng-container>
 
