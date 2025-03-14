@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,8 +14,8 @@ import { MatDividerModule } from '@angular/material/divider';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatButtonModule,
     MatDialogModule,
+    MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
@@ -107,12 +107,17 @@ export class OperadorDialogComponent {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<OperadorDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: {
+      title: string;
+      nombre?: string;
+      email?: string;
+      telefono?: string;
+    }
   ) {
     this.form = this.fb.group({
-      nombre: [data?.nombre || '', [Validators.required]],
-      email: [data?.email || '', [Validators.required, Validators.email]],
-      telefono: [data?.telefono || '', [Validators.required]]
+      nombre: [data.nombre || '', Validators.required],
+      email: [data.email || '', [Validators.required, Validators.email]],
+      telefono: [data.telefono || '', [Validators.pattern(/^\+569\d{8}$/)]]
     });
   }
 

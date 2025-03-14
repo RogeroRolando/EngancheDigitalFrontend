@@ -43,7 +43,9 @@ export interface Operador {
   id: number;
   nombre: string;
   email: string;
+  telefono?: string;
   activo: boolean;
+  clientesAsignados: number[];
 }
 
 export interface Actividad {
@@ -280,10 +282,38 @@ export class EngancheService {
   ];
 
   private operadores: Operador[] = [
-    { id: 1, nombre: 'Juan Pérez', email: 'juan@enganche.com', activo: true },
-    { id: 2, nombre: 'María López', email: 'maria@enganche.com', activo: true },
-    { id: 3, nombre: 'Carlos Ruiz', email: 'carlos@enganche.com', activo: true },
-    { id: 4, nombre: 'Ana García', email: 'ana@enganche.com', activo: false }
+    { 
+      id: 1, 
+      nombre: 'Juan Pérez', 
+      email: 'juan@enganche.com', 
+      telefono: '+56912345678',
+      activo: true, 
+      clientesAsignados: [1, 2] 
+    },
+    { 
+      id: 2, 
+      nombre: 'María López', 
+      email: 'maria@enganche.com', 
+      telefono: '+56923456789',
+      activo: true, 
+      clientesAsignados: [3] 
+    },
+    { 
+      id: 3, 
+      nombre: 'Carlos Ruiz', 
+      email: 'carlos@enganche.com', 
+      telefono: '+56934567890',
+      activo: true, 
+      clientesAsignados: [4, 5] 
+    },
+    { 
+      id: 4, 
+      nombre: 'Ana García', 
+      email: 'ana@enganche.com', 
+      telefono: '+56945678901',
+      activo: false, 
+      clientesAsignados: [] 
+    }
   ];
 
   private actividades: Actividad[] = [

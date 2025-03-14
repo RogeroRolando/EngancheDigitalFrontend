@@ -14,19 +14,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { OperadorDialogComponent } from './dialogs/operador-dialog.component';
 import { AsignarClientesDialogComponent } from './dialogs/asignar-clientes-dialog.component';
 import { ConfirmarEliminarDialogComponent } from './dialogs/confirmar-eliminar-dialog.component';
-
-interface Operador {
-  id: number;
-  nombre: string;
-  email: string;
-  telefono: string;
-  clientesAsignados: number[];
-}
-
-interface Cliente {
-  id: number;
-  nombre: string;
-}
+import { EngancheService, Cliente, Operador } from '@core/services/enganche.service';
 
 @Component({
   selector: 'app-gestion-operadores',
@@ -62,29 +50,30 @@ interface Cliente {
 })
 export class GestionOperadoresComponent implements OnInit {
   displayedColumns: string[] = ['nombre', 'email', 'telefono', 'clientesAsignados', 'acciones'];
-  operadores: Operador[] = [
-    {
-      id: 1,
-      nombre: 'Operador 1',
-      email: 'operador1@example.com',
-      telefono: '123456789',
-      clientesAsignados: [1, 2]
-    }
-  ];
-
-  clientes: Cliente[] = [
-    { id: 1, nombre: 'Cliente 1' },
-    { id: 2, nombre: 'Cliente 2' },
-    { id: 3, nombre: 'Cliente 3' }
-  ];
+  operadores: Operador[] = [];
+  clientes: Cliente[] = [];
 
   constructor(
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private engancheService: EngancheService
   ) {}
 
   ngOnInit() {
-    // Aquí se cargarían los datos reales de la base de datos
+    this.cargarOperadores();
+    this.cargarClientes();
+  }
+
+  cargarOperadores() {
+    this.engancheService.getOperadores().subscribe(operadores => {
+      this.operadores = operadores;
+    });
+  }
+
+  cargarClientes() {
+    this.engancheService.getClientes().subscribe(clientes => {
+      this.clientes = clientes;
+    });
   }
 
   agregarOperador() {
@@ -144,7 +133,8 @@ export class GestionOperadoresComponent implements OnInit {
         clientesDisponibles: this.clientes,
         clientesAsignados: this.clientes.filter(c => operador.clientesAsignados.includes(c.id))
       },
-      disableClose: true
+      disableClose: true,
+      width: '600px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -181,5 +171,12 @@ export class GestionOperadoresComponent implements OnInit {
         });
       }
     });
+  }
+
+  getClientesAsignadosText(operador: Operador): string {
+    return this.clientes
+      .filter(c => operador.clientesAsignados.includes(c.id))
+      .map(c => c.nombre)
+      .join(', ');
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -11,10 +11,18 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { FormsModule } from '@angular/forms';
+import { Cliente } from '@core/services/enganche.service';
 
-interface Cliente {
-  id: number;
-  nombre: string;
+interface DialogData {
+  operador: {
+    id: number;
+    nombre: string;
+  };
+  clientesDisponibles: Cliente[];
+  clientesAsignados: Cliente[];
 }
 
 @Component({
@@ -32,210 +40,380 @@ interface Cliente {
     MatSelectModule,
     MatTooltipModule,
     MatBadgeModule,
-    MatChipsModule
+    MatChipsModule,
+    MatInputModule,
+    MatPaginatorModule,
+    FormsModule
   ],
-  templateUrl: './asignar-clientes-dialog.component.html',
+  template: `
+    <div class="dialog-header">
+      <h2>Asignar Clientes - {{data.operador.nombre}}</h2>
+    </div>
+
+    <div class="content-container">
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar clientes</mat-label>
+          <input matInput [(ngModel)]="searchTerm" (ngModelChange)="filtrarClientes()" placeholder="Nombre, RUT o correo">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="clientes-container">
+        <mat-card class="clientes-disponibles">
+          <mat-card-header>
+            <mat-card-title>Clientes Disponibles</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list>
+              <mat-list-item *ngFor="let cliente of clientesFiltradosPaginados" class="cliente-item">
+                <div class="cliente-info">
+                  <span class="cliente-nombre">{{cliente.nombre}}</span>
+                  <div class="cliente-detalles">
+                    <span class="cliente-detalle" *ngIf="cliente.rut">
+                      <mat-icon class="detalle-icon">badge</mat-icon>
+                      RUT: {{cliente.rut}}
+                    </span>
+                    <span class="cliente-detalle" *ngIf="cliente.email">
+                      <mat-icon class="detalle-icon">email</mat-icon>
+                      {{cliente.email}}
+                    </span>
+                  </div>
+                </div>
+                <button mat-icon-button color="primary" (click)="asignarCliente(cliente)" 
+                        matTooltip="Asignar cliente">
+                  <mat-icon>add_circle</mat-icon>
+                </button>
+              </mat-list-item>
+            </mat-list>
+            <mat-paginator
+              [length]="clientesFiltrados.length"
+              [pageSize]="pageSize"
+              [pageSizeOptions]="[5, 10, 25]"
+              (page)="onPageChange($event)"
+              aria-label="Seleccionar página">
+            </mat-paginator>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="clientes-asignados">
+          <mat-card-header>
+            <mat-card-title>
+              Clientes Asignados
+              <span class="contador-clientes">
+                {{clientesAsignados.length}} cliente(s)
+              </span>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list>
+              <mat-list-item *ngFor="let cliente of clientesAsignados" class="cliente-item">
+                <div class="cliente-info">
+                  <span class="cliente-nombre">{{cliente.nombre}}</span>
+                  <div class="cliente-detalles">
+                    <span class="cliente-detalle" *ngIf="cliente.rut">
+                      <mat-icon class="detalle-icon">badge</mat-icon>
+                      RUT: {{cliente.rut}}
+                    </span>
+                    <span class="cliente-detalle" *ngIf="cliente.email">
+                      <mat-icon class="detalle-icon">email</mat-icon>
+                      {{cliente.email}}
+                    </span>
+                  </div>
+                </div>
+                <button mat-icon-button color="warn" (click)="removerCliente(cliente)"
+                        matTooltip="Remover cliente">
+                  <mat-icon>remove_circle</mat-icon>
+                </button>
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button mat-button (click)="onCancel()">Cancelar</button>
+      <button mat-raised-button color="primary" (click)="onSubmit()">Guardar</button>
+    </div>
+  `,
   styles: [`
     :host {
       display: block;
       width: 100%;
-      min-width: 500px;
-      max-width: 700px;
-      overflow-x: hidden;
+      min-width: 600px;
+      max-width: 800px;
     }
 
     .dialog-header {
-      background: #3f51b5;
+      padding: 16px;
+      background-color: #f5f5f5;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .dialog-header h2 {
       margin: 0;
-      padding: 20px 24px;
-      
-      h2 {
-        color: white;
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 500;
-      }
+      font-size: 20px;
+      color: #333;
     }
 
     .content-container {
-      padding: 24px;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-      
-      h3 {
-        margin: 0;
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: rgba(0, 0, 0, 0.87);
-      }
-
-      .counter {
-        background: #e8eaf6;
-        color: #3f51b5;
-        padding: 4px 8px;
-        border-radius: 12px;
-        font-size: 0.85rem;
-        font-weight: 500;
-      }
-    }
-
-    .clients-list {
-      max-height: 300px;
+      padding: 16px;
+      max-height: calc(80vh - 130px);
       overflow-y: auto;
-      overflow-x: hidden;
-      margin: 0;
-      padding: 0;
-
-      .mat-mdc-list-item {
-        border-radius: 8px;
-        margin-bottom: 8px;
-        background: #f8f9fa;
-        transition: background-color 0.2s;
-
-        &:hover {
-          background: #f1f3f4;
-        }
-
-        .mdc-list-item__content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 8px 16px;
-        }
-      }
+      min-height: 400px;
     }
 
-    .client-chip {
-      background: #e8eaf6;
-      color: #3f51b5;
-      padding: 6px 12px;
-      border-radius: 16px;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-      transition: all 0.2s;
-
-      &:hover {
-        background: #c5cae9;
-      }
-
-      .remove-button {
-        opacity: 0.7;
-        
-        &:hover {
-          opacity: 1;
-        }
-      }
+    .search-container {
+      margin-bottom: 16px;
+      position: sticky;
+      top: 0;
+      background-color: white;
+      z-index: 1;
+      padding: 8px 0;
     }
 
-    .empty-state {
-      text-align: center;
-      padding: 32px;
-      color: rgba(0, 0, 0, 0.6);
-      
-      mat-icon {
-        font-size: 48px;
-        width: 48px;
-        height: 48px;
-        margin-bottom: 16px;
-        opacity: 0.5;
-      }
-    }
-
-    .mat-mdc-form-field {
+    .search-field {
       width: 100%;
     }
 
-    .form-divider {
-      margin: 32px 0;
+    .clientes-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+      min-height: 300px;
+    }
+
+    .clientes-disponibles,
+    .clientes-asignados {
+      height: 100%;
+      min-height: 300px;
+    }
+
+    mat-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    mat-card-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+      min-height: 200px;
+    }
+
+    .cliente-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      min-height: 64px;
+      white-space: normal;
+      height: auto;
+    }
+
+    .cliente-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding-right: 16px;
+      overflow: hidden;
+    }
+
+    .cliente-nombre {
+      font-weight: 500;
+      white-space: normal;
+      word-wrap: break-word;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .cliente-detalles {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cliente-detalle {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #666;
+      white-space: normal;
+      word-wrap: break-word;
+      line-height: 1.2;
+    }
+
+    .detalle-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: #999;
+    }
+
+    mat-list-item {
+      height: auto !important;
+    }
+
+    ::ng-deep .mat-mdc-list-item-content {
+      height: auto !important;
+      min-height: 48px !important;
     }
 
     .dialog-actions {
+      padding: 16px;
       display: flex;
       justify-content: flex-end;
-      gap: 12px;
-      padding: 8px 0;
-      margin-top: 24px;
+      gap: 8px;
+      border-top: 1px solid #e0e0e0;
+    }
 
-      button {
-        min-width: 120px;
-        
-        &.mat-mdc-raised-button {
-          height: 40px;
-        }
+    .contador-clientes {
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+      margin-left: 8px;
+    }
+
+    @media (max-width: 768px) {
+      :host {
+        min-width: 320px;
+      }
+
+      .clientes-container {
+        grid-template-columns: 1fr;
+      }
+
+      .content-container {
+        max-height: calc(90vh - 180px);
+        padding: 8px;
+      }
+
+      .cliente-item {
+        padding: 12px 8px;
+      }
+
+      .cliente-nombre {
+        font-size: 14px;
+      }
+
+      .cliente-detalle {
+        font-size: 11px;
+      }
+
+      .detalle-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+      }
+
+      .dialog-actions {
+        padding: 8px;
+      }
+
+      mat-card {
+        margin-bottom: 16px;
       }
     }
 
-    ::ng-deep {
-      .mdc-text-field--outlined {
-        --mdc-outlined-text-field-container-shape: 8px;
+    @media (max-width: 480px) {
+      :host {
+        min-width: 280px;
       }
 
-      .mat-mdc-form-field-subscript-wrapper {
-        height: 20px;
+      .dialog-header h2 {
+        font-size: 18px;
       }
 
-      .mat-mdc-dialog-container {
-        --mdc-dialog-container-shape: 12px;
-        overflow-x: hidden;
+      .search-field {
+        font-size: 14px;
       }
 
-      .mdc-button {
-        --mdc-text-button-label-text-tracking: 0.5px;
-        --mdc-filled-button-label-text-tracking: 0.5px;
-        --mdc-protected-button-label-text-tracking: 0.5px;
-        --mdc-outlined-button-label-text-tracking: 0.5px;
-        letter-spacing: var(--mdc-text-button-label-text-tracking);
+      .content-container {
+        padding: 4px;
       }
     }
   `]
 })
-export class AsignarClientesDialogComponent {
+export class AsignarClientesDialogComponent implements OnInit {
   clientesAsignados: Cliente[] = [];
   clientesDisponibles: Cliente[] = [];
+  clientesFiltrados: Cliente[] = [];
+  clientesFiltradosPaginados: Cliente[] = [];
+  searchTerm: string = '';
+  pageSize: number = 10;
+  currentPage: number = 0;
 
   constructor(
-    private dialogRef: MatDialogRef<AsignarClientesDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {
-      operador: { id: number; nombre: string };
-      clientesAsignados: Cliente[];
-      clientesDisponibles: Cliente[];
-    }
-  ) {
-    // Inicializar las listas con los datos recibidos
-    this.clientesAsignados = [...(data.clientesAsignados || [])];
-    this.clientesDisponibles = [...(data.clientesDisponibles || [])];
+    public dialogRef: MatDialogRef<AsignarClientesDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData
+  ) {}
+
+  ngOnInit(): void {
+    this.clientesAsignados = [...(this.data?.clientesAsignados || [])];
+    this.actualizarClientesDisponibles();
   }
 
-  asignarCliente(cliente: Cliente) {
-    if (this.clientesAsignados.length >= 10) return;
-    
-    const index = this.clientesDisponibles.findIndex(c => c.id === cliente.id);
-    if (index !== -1) {
-      this.clientesDisponibles.splice(index, 1);
-      this.clientesAsignados.push(cliente);
+  private actualizarClientesDisponibles(): void {
+    const idsAsignados = new Set(this.clientesAsignados.map((c: Cliente) => c.id));
+    this.clientesDisponibles = (this.data?.clientesDisponibles || []).filter(
+      (cliente: Cliente) => !idsAsignados.has(cliente.id) && cliente.activo
+    );
+    this.filtrarClientes();
+  }
+
+  filtrarClientes(): void {
+    if (!this.searchTerm?.trim()) {
+      this.clientesFiltrados = [...this.clientesDisponibles];
+    } else {
+      const searchTermLower = this.searchTerm.toLowerCase().trim();
+      this.clientesFiltrados = this.clientesDisponibles.filter((cliente: Cliente) =>
+        cliente.nombre.toLowerCase().includes(searchTermLower) ||
+        (cliente.email && cliente.email.toLowerCase().includes(searchTermLower)) ||
+        (cliente.rut && cliente.rut.toLowerCase().includes(searchTermLower))
+      );
+    }
+    this.currentPage = 0;
+    this.actualizarPaginacion();
+  }
+
+  private actualizarPaginacion(): void {
+    const inicio = this.currentPage * this.pageSize;
+    const fin = inicio + this.pageSize;
+    this.clientesFiltradosPaginados = this.clientesFiltrados.slice(inicio, fin);
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.actualizarPaginacion();
+  }
+
+  asignarCliente(cliente: Cliente): void {
+    if (cliente && !this.clientesAsignados.some(c => c.id === cliente.id)) {
+      this.clientesAsignados = [...this.clientesAsignados, cliente];
+      this.actualizarClientesDisponibles();
     }
   }
 
-  desasignarCliente(cliente: Cliente) {
-    const index = this.clientesAsignados.findIndex(c => c.id === cliente.id);
-    if (index !== -1) {
-      this.clientesAsignados.splice(index, 1);
-      this.clientesDisponibles.push(cliente);
+  removerCliente(cliente: Cliente): void {
+    if (cliente) {
+      this.clientesAsignados = this.clientesAsignados.filter((c: Cliente) => c.id !== cliente.id);
+      this.actualizarClientesDisponibles();
     }
   }
 
-  guardarCambios() {
+  onSubmit(): void {
     this.dialogRef.close({
-      clientesAsignados: this.clientesAsignados,
-      clientesDisponibles: this.clientesDisponibles
+      clientesAsignados: [...this.clientesAsignados]
     });
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
   }
 }
