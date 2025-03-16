@@ -128,13 +128,13 @@ export class GestionOperadoresComponent implements OnInit {
 
   asignarClientes(operador: Operador) {
     const dialogRef = this.dialog.open(AsignarClientesDialogComponent, {
+      ...AsignarClientesDialogComponent.getDialogConfig(),
       data: {
         operador,
         clientesDisponibles: this.clientes,
         clientesAsignados: this.clientes.filter(c => operador.clientesAsignados.includes(c.id))
       },
-      disableClose: true,
-      width: '600px'
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(result => {

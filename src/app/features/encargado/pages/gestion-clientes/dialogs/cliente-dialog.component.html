@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="clienteForm" class="form-container">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" placeholder="Ingrese el nombre">
+      <mat-error *ngIf="clienteForm.get('nombre')?.hasError('required')">
+        El nombre es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>RUT</mat-label>
+      <input matInput formControlName="rut" placeholder="Ingrese el RUT">
+      <mat-error *ngIf="clienteForm.get('rut')?.hasError('required')">
+        El RUT es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Correo electrónico</mat-label>
+      <input matInput formControlName="email" placeholder="Ingrese el correo" type="email">
+      <mat-error *ngIf="clienteForm.get('email')?.hasError('required')">
+        El correo es requerido
+      </mat-error>
+      <mat-error *ngIf="clienteForm.get('email')?.hasError('email')">
+        Ingrese un correo válido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Teléfono</mat-label>
+      <input matInput formControlName="telefono" placeholder="Ingrese el teléfono">
+      <mat-error *ngIf="clienteForm.get('telefono')?.hasError('required')">
+        El teléfono es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="activo">Cliente activo</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" 
+          [disabled]="!clienteForm.valid"
+          (click)="onSubmit()">
+    {{ data.cliente ? 'Actualizar' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

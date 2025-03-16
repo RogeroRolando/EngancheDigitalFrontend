@@ -1,53 +1,23 @@
-<div class="gestion-clientes-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Gestión de Clientes</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <!-- Botón para agregar nuevo cliente -->
-      <div class="actions-container">
-        <button mat-raised-button color="primary" (click)="agregarCliente()">
-          <mat-icon>add</mat-icon>
-          Nuevo Cliente
-        </button>
-      </div>
+<div class="content-container">
+  <div class="header-container">
+    <h1>Gestión de Clientes</h1>
+    <button mat-raised-button color="primary" (click)="agregarCliente()">
+      <mat-icon>add</mat-icon>
+      Nuevo Cliente
+    </button>
+  </div>
 
-      <!-- Tabla de clientes -->
-      <table mat-table [dataSource]="clientes" class="mat-elevation-z8">
-        <!-- Nombre Column -->
-        <ng-container matColumnDef="nombre">
-          <th mat-header-cell *matHeaderCellDef> Nombre </th>
-          <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
-        </ng-container>
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Buscar cliente</mat-label>
+    <input matInput [(ngModel)]="searchTerm" (ngModelChange)="filtrarClientes()" placeholder="Nombre, RUT o correo">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
 
-        <!-- Email Column -->
-        <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef> Email </th>
-          <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-        </ng-container>
-
-        <!-- Teléfono Column -->
-        <ng-container matColumnDef="telefono">
-          <th mat-header-cell *matHeaderCellDef> Teléfono </th>
-          <td mat-cell *matCellDef="let element"> {{element.telefono}} </td>
-        </ng-container>
-
-        <!-- Acciones Column -->
-        <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef> Acciones </th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-icon-button color="primary" (click)="editarCliente(element)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="eliminarCliente(element)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-    </mat-card-content>
-  </mat-card>
+  <app-clientes-table
+    [clientes]="clientesFiltradosPaginados"
+    [pageSize]="pageSize"
+    (onEdit)="editarCliente($event)"
+    (onToggleEstado)="toggleEstadoCliente($event)"
+    (onPageChange)="onPageChange($event)">
+  </app-clientes-table>
 </div>

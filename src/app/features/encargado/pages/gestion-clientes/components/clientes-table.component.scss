@@ -1,0 +1,10 @@
+.mat-column-acciones {
+  width: 120px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .mat-column-email {
+    display: none;
+  }
+}

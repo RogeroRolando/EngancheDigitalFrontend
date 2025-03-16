@@ -1,0 +1,11 @@
+<div class="table-container mat-elevation-z8">
+  <ng-content></ng-content>
+  
+  <mat-paginator
+    [length]="totalItems"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="onPageChange($event)"
+    aria-label="Seleccionar página">
+  </mat-paginator>
+</div>

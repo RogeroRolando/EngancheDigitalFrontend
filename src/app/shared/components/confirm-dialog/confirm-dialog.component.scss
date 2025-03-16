@@ -1,0 +1,37 @@
+.dialog-content {
+  min-width: 300px;
+  padding: 0;
+
+  .message {
+    padding: 24px;
+    color: #5f6368;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .icon {
+    margin-right: 8px;
+    vertical-align: middle;
+
+    &.warning {
+      color: #f44336;
+    }
+
+    &.info {
+      color: #1976d2;
+    }
+  }
+}
+
+.dialog-actions {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+
+  button {
+    min-width: 100px;
+  }
+}

@@ -1,64 +1,126 @@
-<div class="dialog-header">
-  <h2>Asignar Clientes a {{data.operador.nombre}}</h2>
-</div>
+<h2 mat-dialog-title>
+  Asignar Clientes a {{ data.operador.nombre }}
+  <span class="cliente-counter" [class.limite-alcanzado]="clientesSeleccionados.size >= maxClientes">
+    {{ clientesSeleccionados.size }}/{{ maxClientes }} clientes
+  </span>
+</h2>
 
-<div class="content-container">
-  <!-- Sección de Clientes Asignados -->
-  <div class="section-title">
-    <h3>Clientes Asignados</h3>
-    <span class="counter">{{clientesAsignados.length}}/10</span>
-  </div>
-
-  <div *ngIf="clientesAsignados.length === 0" class="empty-state">
-    <mat-icon>person_off</mat-icon>
-    <p>No hay clientes asignados</p>
-  </div>
-
-  <div class="clients-list" *ngIf="clientesAsignados.length > 0">
-    <div *ngFor="let cliente of clientesAsignados" class="client-chip">
-      <span>{{cliente.nombre}}</span>
-      <button mat-icon-button class="remove-button"
-              (click)="desasignarCliente(cliente)"
-              matTooltip="Quitar cliente">
+<mat-dialog-content class="dialog-content">
+  <div class="search-container">
+    <mat-form-field appearance="outline">
+      <mat-label>Buscar cliente</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="filtrarClientes()" 
+             placeholder="Nombre, RUT o correo">
+      <button mat-icon-button matSuffix *ngIf="searchTerm" (click)="limpiarBusqueda()">
         <mat-icon>close</mat-icon>
       </button>
+      <mat-icon matSuffix *ngIf="!searchTerm">search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="columns-container">
+    <!-- Columna de Clientes Disponibles -->
+    <div class="column">
+      <h3>Clientes Disponibles ({{ clientesDisponiblesFiltrados.length }})</h3>
+      <div class="cards-grid">
+        <div *ngFor="let cliente of clientesDisponiblesFiltrados"
+             class="cliente-card"
+             [class.inactive]="!cliente.activo"
+             [matTooltip]="!cliente.activo ? 'Cliente inactivo' : ''"
+             (click)="toggleClienteSeleccion(cliente)">
+          <div class="card-header">
+            <div class="header-content">
+              <span class="nombre">{{ cliente.nombre }}</span>
+              <span class="badge" *ngIf="!cliente.activo">Inactivo</span>
+            </div>
+            <button mat-icon-button color="primary" 
+                    [disabled]="!cliente.activo || clientesSeleccionados.size >= maxClientes"
+                    (click)="$event.stopPropagation(); toggleClienteSeleccion(cliente)"
+                    [matTooltip]="clientesSeleccionados.size >= maxClientes ? 'Límite de clientes alcanzado' : 'Asignar cliente'">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+          </div>
+          <div class="card-content">
+            <div class="info-row" *ngIf="cliente.rut">
+              <mat-icon>badge</mat-icon>
+              <span>{{ cliente.rut }}</span>
+            </div>
+            <div class="info-row" *ngIf="cliente.email">
+              <mat-icon>email</mat-icon>
+              <span>{{ cliente.email }}</span>
+            </div>
+            <app-estado-badge [activo]="cliente.activo"></app-estado-badge>
+          </div>
+          <div class="card-actions">
+            <span class="action-text" *ngIf="!cliente.activo">No disponible para asignar</span>
+            <span class="action-text" *ngIf="cliente.activo && clientesSeleccionados.size >= maxClientes">Límite alcanzado</span>
+            <span class="action-text success" *ngIf="cliente.activo && clientesSeleccionados.size < maxClientes">Click para asignar</span>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="clientesDisponiblesFiltrados.length === 0">
+          <mat-icon>person_off</mat-icon>
+          <p>No hay clientes disponibles</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna de Clientes Asignados -->
+    <div class="column">
+      <h3>Clientes Asignados ({{ clientesAsignadosFiltrados.length }})</h3>
+      <div class="cards-grid">
+        <div *ngFor="let cliente of clientesAsignadosFiltrados"
+             class="cliente-card"
+             [class.inactive]="!cliente.activo"
+             [matTooltip]="!cliente.activo ? 'Cliente inactivo' : ''"
+             (click)="toggleClienteSeleccion(cliente)">
+          <div class="card-header">
+            <div class="header-content">
+              <span class="nombre">{{ cliente.nombre }}</span>
+              <span class="badge" *ngIf="!cliente.activo">Inactivo</span>
+            </div>
+            <button mat-icon-button color="warn"
+                    [disabled]="!cliente.activo"
+                    (click)="$event.stopPropagation(); toggleClienteSeleccion(cliente)"
+                    matTooltip="Quitar cliente">
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </div>
+          <div class="card-content">
+            <div class="info-row" *ngIf="cliente.rut">
+              <mat-icon>badge</mat-icon>
+              <span>{{ cliente.rut }}</span>
+            </div>
+            <div class="info-row" *ngIf="cliente.email">
+              <mat-icon>email</mat-icon>
+              <span>{{ cliente.email }}</span>
+            </div>
+            <app-estado-badge [activo]="cliente.activo"></app-estado-badge>
+          </div>
+          <div class="card-actions">
+            <span class="action-text" *ngIf="!cliente.activo">No se puede quitar</span>
+            <span class="action-text warning" *ngIf="cliente.activo">Click para quitar</span>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="clientesAsignadosFiltrados.length === 0">
+          <mat-icon>group_off</mat-icon>
+          <p>No hay clientes asignados</p>
+        </div>
+      </div>
     </div>
   </div>
+</mat-dialog-content>
 
-  <mat-divider class="form-divider"></mat-divider>
-
-  <!-- Sección de Clientes Disponibles -->
-  <div class="section-title">
-    <h3>Clientes Disponibles</h3>
-    <span class="counter">{{clientesDisponibles.length}}</span>
+<mat-dialog-actions class="dialog-actions">
+  <div class="actions-info" *ngIf="clientesSeleccionados.size >= maxClientes">
+    <mat-icon color="warn">warning</mat-icon>
+    <span>Límite máximo de clientes alcanzado</span>
   </div>
-
-  <div *ngIf="clientesDisponibles.length === 0" class="empty-state">
-    <mat-icon>groups_off</mat-icon>
-    <p>No hay clientes disponibles para asignar</p>
-  </div>
-
-  <mat-form-field *ngIf="clientesDisponibles.length > 0" appearance="outline">
-    <mat-label>Seleccionar Cliente</mat-label>
-    <mat-select (selectionChange)="asignarCliente($event.value)" 
-               [disabled]="clientesAsignados.length >= 10">
-      <mat-option *ngFor="let cliente of clientesDisponibles" [value]="cliente">
-        {{cliente.nombre}}
-      </mat-option>
-    </mat-select>
-    <mat-icon matPrefix>person_add</mat-icon>
-    <mat-hint *ngIf="clientesAsignados.length >= 10">
-      Límite máximo de clientes alcanzado
-    </mat-hint>
-  </mat-form-field>
-
-  <div class="dialog-actions">
-    <button mat-button mat-dialog-close>
-      Cancelar
-    </button>
-    <button mat-raised-button color="primary" (click)="guardarCambios()">
-      <mat-icon>save</mat-icon>
-      Guardar Cambios
+  <div class="actions-buttons">
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <button mat-raised-button color="primary" 
+            [disabled]="!hasChanges()"
+            (click)="onGuardar()">
+      Guardar cambios
     </button>
   </div>
-</div>
+</mat-dialog-actions>

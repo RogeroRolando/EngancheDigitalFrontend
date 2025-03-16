@@ -1,0 +1,4 @@
+<div class="estado-badge" [class.activo]="activo" [class.inactivo]="!activo">
+  <mat-icon>{{ activo ? 'check_circle' : 'cancel' }}</mat-icon>
+  {{ activo ? 'Activo' : 'Inactivo' }}
+</div>

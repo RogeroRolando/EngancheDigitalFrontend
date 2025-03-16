@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<mat-dialog-content class="dialog-content">
+  <div class="message">
+    <mat-icon class="icon" [class]="data.type">
+      {{ data.type === 'warning' ? 'warning' : 'info' }}
+    </mat-icon>
+    {{ data.message }}
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions">
+  <button mat-button (click)="onCancel()">
+    {{ data.cancelText || 'Cancelar' }}
+  </button>
+  <button mat-raised-button 
+          [color]="data.type === 'warning' ? 'warn' : 'primary'"
+          (click)="onConfirm()">
+    {{ data.confirmText || 'Confirmar' }}
+  </button>
+</mat-dialog-actions>

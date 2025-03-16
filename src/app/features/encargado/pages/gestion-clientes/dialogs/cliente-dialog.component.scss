@@ -1,0 +1,28 @@
+.dialog-content {
+  min-width: 400px;
+  padding: 0;
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+.dialog-actions {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+
+  button {
+    min-width: 100px;
+  }
+}
