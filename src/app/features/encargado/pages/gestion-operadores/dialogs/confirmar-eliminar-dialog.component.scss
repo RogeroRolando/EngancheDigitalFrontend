@@ -1,0 +1,112 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 400px;
+  max-width: 500px;
+  overflow-x: hidden;
+}
+
+.dialog-header {
+  background: linear-gradient(135deg, #d32f2f, #c62828);
+  margin: 0;
+  padding: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  h2 {
+    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.content-container {
+  padding: 24px;
+  background-color: #fff;
+}
+
+.confirmation-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  span {
+    font-size: 14px;
+    color: #202124;
+    line-height: 1.5;
+
+    strong {
+      color: #d32f2f;
+      font-weight: 500;
+    }
+  }
+}
+
+.warning-text {
+  margin: 0;
+  font-size: 12px;
+  color: #5f6368;
+  padding-left: 36px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 8px 0;
+  margin-top: 24px;
+
+  button {
+    min-width: 120px;
+    text-transform: none;
+    font-weight: 500;
+    
+    &.mat-mdc-raised-button {
+      height: 40px;
+    }
+
+    &.mat-warn {
+      background-color: #d32f2f;
+      
+      &:hover {
+        background-color: #c62828;
+      }
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: 8px 24px 24px;
+  margin-bottom: 0;
+}
+
+::ng-deep {
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-shape: 12px;
+    overflow-x: hidden;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .mat-mdc-dialog-surface {
+    border-radius: 8px;
+  }
+
+  .mdc-button {
+    --mdc-text-button-label-text-tracking: 0.5px;
+    --mdc-filled-button-label-text-tracking: 0.5px;
+    --mdc-protected-button-label-text-tracking: 0.5px;
+    --mdc-outlined-button-label-text-tracking: 0.5px;
+    letter-spacing: var(--mdc-text-button-label-text-tracking);
+  }
+}

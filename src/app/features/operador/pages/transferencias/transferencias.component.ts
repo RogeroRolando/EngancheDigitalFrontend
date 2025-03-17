@@ -134,16 +134,20 @@ export class TransferenciasComponent implements OnInit {
   }
 
   agregarTransferencia() {
-    const dialogRef = this.dialog.open(AgregarTransferenciaDialogComponent);
+    const dialogRef = this.dialog.open(AgregarTransferenciaDialogComponent, {
+      data: {
+        modo: 'crear'
+      }
+    });
     
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result && result.modo === 'crear') {
         const nuevaTransferencia: Omit<Transferencia, 'id'> = {
           fecha: new Date().toLocaleString(),
-          cliente: result.cliente.nombre,
-          importe: result.importe,
+          cliente: result.datos.cliente.nombre,
+          importe: result.datos.importe,
           estado: 'Pendiente',
-          comprobante: URL.createObjectURL(result.comprobante)
+          comprobante: URL.createObjectURL(result.datos.comprobante)
         };
         
         this.engancheService.agregarTransferencia(nuevaTransferencia)
@@ -164,7 +168,24 @@ export class TransferenciasComponent implements OnInit {
   }
 
   editarTransferencia(transferencia: Transferencia) {
-    // Implementar edición si es necesario
-    console.log('Editar transferencia:', transferencia);
+    const dialogRef = this.dialog.open(AgregarTransferenciaDialogComponent, {
+      data: {
+        modo: 'editar',
+        transferencia: transferencia
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.modo === 'editar') {
+        this.engancheService.editarTransferencia(result.id, result.cambios)
+          .subscribe(transferenciaActualizada => {
+            const index = this.transferencias.findIndex(t => t.id === result.id);
+            if (index !== -1) {
+              this.transferencias[index] = transferenciaActualizada;
+              this.transferencias = [...this.transferencias]; // Forzar actualización de la vista
+            }
+          });
+      }
+    });
   }
 }

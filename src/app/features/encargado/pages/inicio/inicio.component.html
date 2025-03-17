@@ -41,17 +41,19 @@
   </div>
 
   <div class="actions-section">
-    <button mat-raised-button color="primary" (click)="irAValidarTransferencias()">
+    <button mat-flat-button color="primary" class="action-button" (click)="irAValidarTransferencias()">
       <mat-icon>receipt_long</mat-icon>
-      Validar Transferencias
+      <span>Validar Transferencias</span>
     </button>
-    <button mat-raised-button color="accent" (click)="irAGestionarOperadores()">
+
+    <button mat-flat-button color="accent" class="action-button" (click)="irAGestionarOperadores()">
       <mat-icon>group</mat-icon>
-      Gestionar Operadores
+      <span>Gestionar Operadores</span>
     </button>
-    <button mat-raised-button color="warn" (click)="irAGestionarClientes()">
+
+    <button mat-flat-button color="warn" class="action-button" (click)="irAGestionarClientes()">
       <mat-icon>people</mat-icon>
-      Gestionar Clientes
+      <span>Gestionar Clientes</span>
     </button>
   </div>
 

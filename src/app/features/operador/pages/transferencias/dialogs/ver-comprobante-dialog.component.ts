@@ -13,36 +13,8 @@ import { BaseDialogComponent } from '@core/components/base-dialog/base-dialog.co
     MatDialogModule,
     BaseDialogComponent
   ],
-  template: `
-    <app-base-dialog title="Comprobante de Transferencia">
-      <div class="comprobante-container">
-        <img [src]="data.comprobante" alt="Comprobante" class="comprobante-img">
-      </div>
-      <div dialog-actions>
-        <button mat-button (click)="cerrar()">
-          Cerrar
-        </button>
-      </div>
-    </app-base-dialog>
-  `,
-  styles: [`
-    .comprobante-container {
-      width: 100%;
-      max-height: 70vh;
-      overflow: auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-    }
-
-    .comprobante-img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-  `]
+  templateUrl: './ver-comprobante-dialog.component.html',
+  styleUrls: ['./ver-comprobante-dialog.component.scss']
 })
 export class VerComprobanteDialogComponent {
   constructor(

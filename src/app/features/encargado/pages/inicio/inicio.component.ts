@@ -76,11 +76,11 @@ export class InicioComponent implements OnInit {
   }
 
   irAGestionarOperadores(): void {
-    this.router.navigate(['/encargado/operadores']);
+    this.router.navigate(['/encargado/gestion-operadores']);
   }
 
   irAGestionarClientes(): void {
-    this.router.navigate(['/encargado/clientes']);
+    this.router.navigate(['/encargado/gestion-clientes']);
   }
 
   irAValidarTransferencias(): void {

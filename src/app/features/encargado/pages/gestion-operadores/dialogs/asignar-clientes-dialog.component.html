@@ -96,10 +96,6 @@
             </div>
             <app-estado-badge [activo]="cliente.activo"></app-estado-badge>
           </div>
-          <div class="card-actions">
-            <span class="action-text" *ngIf="!cliente.activo">No se puede quitar</span>
-            <span class="action-text warning" *ngIf="cliente.activo">Click para quitar</span>
-          </div>
         </div>
         <div class="empty-state" *ngIf="clientesAsignadosFiltrados.length === 0">
           <mat-icon>group_off</mat-icon>

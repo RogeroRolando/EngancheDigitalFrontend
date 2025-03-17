@@ -1,0 +1,10 @@
+<app-base-dialog title="Comprobante de Transferencia">
+  <div class="comprobante-container">
+    <img [src]="data.comprobante" alt="Comprobante" class="comprobante-img">
+  </div>
+  <div dialog-actions>
+    <button mat-button (click)="cerrar()">
+      Cerrar
+    </button>
+  </div>
+</app-base-dialog>

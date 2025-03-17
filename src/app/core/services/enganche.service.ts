@@ -397,6 +397,20 @@ export class EngancheService {
     return of(nuevaTransferencia);
   }
 
+  editarTransferencia(id: number, transferencia: Partial<Transferencia>): Observable<Transferencia> {
+    const index = this.transferencias.findIndex(t => t.id === id);
+    if (index !== -1) {
+      const transferenciaActualizada: Transferencia = {
+        ...this.transferencias[index],
+        ...transferencia,
+        id // Aseguramos que el ID no cambie
+      };
+      this.transferencias[index] = transferenciaActualizada;
+      return of(transferenciaActualizada);
+    }
+    throw new Error('Transferencia no encontrada');
+  }
+
   // Métodos para Clientes
   getClientes(): Observable<Cliente[]> {
     return of(this.clientes);

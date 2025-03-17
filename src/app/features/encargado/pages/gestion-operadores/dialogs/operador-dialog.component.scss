@@ -1,0 +1,129 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 400px;
+  max-width: 600px;
+  overflow-x: hidden;
+}
+
+::ng-deep .operador-dialog {
+  .mat-mdc-dialog-surface {
+    border-radius: 8px;
+  }
+}
+
+.dialog-header {
+  padding: 16px 24px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  
+  h2 {
+    color: #202124;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.form-container {
+  padding: 24px;
+  background-color: #fff;
+
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 16px;
+
+    &:last-child {
+      margin-bottom: 24px;
+    }
+
+    .mat-icon {
+      color: #5f6368;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &.mat-focused {
+      .mat-icon {
+        color: #1976d2;
+      }
+    }
+  }
+}
+
+.form-divider {
+  margin: 24px -24px;
+  border-color: #e0e0e0;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 24px 24px;
+  background-color: #fff;
+
+  button {
+    min-width: 100px;
+    
+    &.mat-mdc-raised-button {
+      height: 36px;
+    }
+
+    mat-icon {
+      margin-right: 8px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &:disabled {
+      opacity: 0.7;
+    }
+  }
+}
+
+::ng-deep {
+  .mdc-text-field--outlined {
+    --mdc-outlined-text-field-container-shape: 8px;
+    --mdc-outlined-text-field-outline-color: #e0e0e0;
+    
+    &:hover {
+      --mdc-outlined-text-field-outline-color: #bdbdbd;
+    }
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    height: 20px;
+  }
+
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-shape: 8px;
+    overflow-x: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .mdc-button {
+    --mdc-text-button-label-text-tracking: 0.25px;
+    --mdc-filled-button-label-text-tracking: 0.25px;
+    --mdc-protected-button-label-text-tracking: 0.25px;
+    --mdc-outlined-button-label-text-tracking: 0.25px;
+    letter-spacing: var(--mdc-text-button-label-text-tracking);
+    text-transform: none;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .mat-mdc-form-field-error {
+    font-size: 12px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #d32f2f;
+  }
+}

@@ -22,87 +22,19 @@ import { MatDividerModule } from '@angular/material/divider';
     MatDividerModule
   ],
   templateUrl: './operador-dialog.component.html',
-  styles: [`
-    :host {
-      display: block;
-      width: 100%;
-      min-width: 400px;
-      max-width: 600px;
-      overflow-x: hidden;
-    }
-
-    .dialog-header {
-      background: #3f51b5;
-      margin: 0;
-      padding: 20px 24px;
-      
-      h2 {
-        color: white;
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 500;
-      }
-    }
-
-    .form-container {
-      padding: 24px;
-    }
-
-    .mat-mdc-form-field {
-      width: 100%;
-      margin-bottom: 16px;
-
-      &:last-child {
-        margin-bottom: 24px;
-      }
-    }
-
-    .form-divider {
-      margin: 32px 0;
-    }
-
-    .dialog-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      padding: 8px 0;
-      margin-top: 16px;
-
-      button {
-        min-width: 120px;
-        
-        &.mat-mdc-raised-button {
-          height: 40px;
-        }
-      }
-    }
-
-    ::ng-deep {
-      .mdc-text-field--outlined {
-        --mdc-outlined-text-field-container-shape: 8px;
-      }
-
-      .mat-mdc-form-field-subscript-wrapper {
-        height: 20px;
-      }
-
-      .mat-mdc-dialog-container {
-        --mdc-dialog-container-shape: 12px;
-        overflow-x: hidden;
-      }
-
-      .mdc-button {
-        --mdc-text-button-label-text-tracking: 0.5px;
-        --mdc-filled-button-label-text-tracking: 0.5px;
-        --mdc-protected-button-label-text-tracking: 0.5px;
-        --mdc-outlined-button-label-text-tracking: 0.5px;
-        letter-spacing: var(--mdc-text-button-label-text-tracking);
-      }
-    }
-  `]
+  styleUrls: ['./operador-dialog.component.scss']
 })
 export class OperadorDialogComponent {
   form: FormGroup;
+
+  static getDialogConfig() {
+    return {
+      width: '500px',
+      maxWidth: '90vw',
+      panelClass: 'operador-dialog',
+      disableClose: false
+    };
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -118,6 +50,11 @@ export class OperadorDialogComponent {
       nombre: [data.nombre || '', Validators.required],
       email: [data.email || '', [Validators.required, Validators.email]],
       telefono: [data.telefono || '', [Validators.pattern(/^\+569\d{8}$/)]]
+    });
+
+    // Configurar el comportamiento al hacer clic fuera del diálogo
+    this.dialogRef.backdropClick().subscribe(() => {
+      this.dialogRef.close();
     });
   }
 

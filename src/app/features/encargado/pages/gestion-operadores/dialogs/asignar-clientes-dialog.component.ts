@@ -50,7 +50,8 @@ export class AsignarClientesDialogComponent implements OnInit {
       maxWidth: '1400px',
       height: '90vh',
       maxHeight: '900px',
-      panelClass: 'asignar-clientes-dialog'
+      panelClass: 'asignar-clientes-dialog',
+      disableClose: false
     };
   }
 
@@ -86,6 +87,11 @@ export class AsignarClientesDialogComponent implements OnInit {
     this.clientesOriginales = new Set(
       data.clientesAsignados.map(cliente => cliente.id)
     );
+
+    // Configurar el comportamiento al hacer clic fuera del diálogo
+    this.dialogRef.backdropClick().subscribe(() => {
+      this.onCancel();
+    });
   }
 
   ngOnInit(): void {

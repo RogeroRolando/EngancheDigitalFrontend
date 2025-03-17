@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,7 +13,12 @@ import { BaseDialogComponent } from '@core/components/base-dialog/base-dialog.co
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { ElementRef, ViewChild } from '@angular/core';
-import { EngancheService, Cliente } from '@core/services/enganche.service';
+import { EngancheService, Cliente, Transferencia } from '@core/services/enganche.service';
+
+interface DialogData {
+  transferencia?: Transferencia;
+  modo: 'crear' | 'editar';
+}
 
 @Component({
   selector: 'app-agregar-transferencia-dialog',
@@ -29,165 +34,8 @@ import { EngancheService, Cliente } from '@core/services/enganche.service';
     MatAutocompleteModule,
     BaseDialogComponent
   ],
-  template: `
-    <app-base-dialog title="Agregar Nueva Transferencia">
-      <form [formGroup]="form" class="dialog-form">
-        <div class="form-field">
-          <label>Cliente*</label>
-          <mat-form-field appearance="outline">
-            <input matInput
-                   [matAutocomplete]="auto"
-                   formControlName="cliente"
-                   placeholder="Buscar cliente..."
-                   (click)="$event.stopPropagation()"
-                   #clienteInput>
-            <mat-icon matSuffix>person</mat-icon>
-          </mat-form-field>
-          <mat-autocomplete #auto="matAutocomplete"
-                          [displayWith]="displayFn"
-                          [autoActiveFirstOption]="false"
-                          (opened)="false">
-            <mat-option *ngFor="let cliente of filteredClientes$ | async" [value]="cliente">
-              {{cliente.nombre}} - {{cliente.rut}}
-            </mat-option>
-          </mat-autocomplete>
-          <mat-error *ngIf="form.get('cliente')?.hasError('required') && form.get('cliente')?.touched">
-            El cliente es requerido
-          </mat-error>
-        </div>
-
-        <div class="form-field">
-          <label>Importe (CLP)*</label>
-          <mat-form-field appearance="outline">
-            <input matInput
-                   type="number"
-                   formControlName="importe"
-                   min="1"
-                   step="1000"
-                   class="number-input">
-            <mat-icon matSuffix>payments</mat-icon>
-          </mat-form-field>
-          <mat-error *ngIf="form.get('importe')?.hasError('required') && form.get('importe')?.touched">
-            El importe es requerido
-          </mat-error>
-          <mat-error *ngIf="form.get('importe')?.hasError('min') && form.get('importe')?.touched">
-            El importe debe ser mayor a 0
-          </mat-error>
-        </div>
-
-        <div class="form-field">
-          <label>Comprobante*</label>
-          <div class="file-input-container">
-            <button mat-stroked-button
-                    type="button"
-                    (click)="fileInput.click()"
-                    class="upload-button">
-              <mat-icon>upload</mat-icon>
-              Subir Comprobante
-            </button>
-            <input type="file"
-                   #fileInput
-                   (change)="onFileSelected($event)"
-                   accept="image/*"
-                   style="display: none">
-          </div>
-          <div class="file-preview" *ngIf="selectedFileName">
-            <span class="file-name">{{selectedFileName}}</span>
-            <button mat-icon-button color="warn" (click)="removeFile($event)">
-              <mat-icon>close</mat-icon>
-            </button>
-          </div>
-          <mat-error *ngIf="form.get('comprobante')?.hasError('required') && form.get('comprobante')?.touched">
-            El comprobante es requerido
-          </mat-error>
-        </div>
-      </form>
-
-      <div dialog-actions>
-        <button mat-button mat-dialog-close>
-          Cancelar
-        </button>
-        <button mat-flat-button
-                color="primary"
-                [disabled]="!form.valid"
-                (click)="guardar()">
-          Guardar
-        </button>
-      </div>
-    </app-base-dialog>
-  `,
-  styles: [`
-    .dialog-form {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-
-      label {
-        font-size: 14px;
-        color: rgba(0, 0, 0, 0.6);
-      }
-    }
-
-    mat-form-field {
-      width: 100%;
-
-      ::ng-deep {
-        .mat-mdc-form-field-flex {
-          background-color: white;
-        }
-
-        .mat-mdc-text-field-wrapper {
-          background-color: white;
-        }
-
-        .mat-mdc-form-field-icon-suffix {
-          color: rgba(0, 0, 0, 0.54);
-        }
-      }
-    }
-
-    .number-input {
-      text-align: right;
-    }
-
-    .file-input-container {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .file-preview {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      background: #f5f5f5;
-      border-radius: 4px;
-      margin-top: 8px;
-
-      .file-name {
-        font-size: 14px;
-        color: rgba(0, 0, 0, 0.87);
-      }
-    }
-
-    mat-error {
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    [dialog-actions] {
-      button {
-        min-width: 88px;
-      }
-    }
-  `]
+  templateUrl: './agregar-transferencia-dialog.component.html',
+  styleUrls: ['./agregar-transferencia-dialog.component.scss']
 })
 export class AgregarTransferenciaDialogComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<AgregarTransferenciaDialogComponent>);
@@ -200,16 +48,38 @@ export class AgregarTransferenciaDialogComponent implements OnInit {
   selectedFileName: string = '';
   clientes: Cliente[] = [];
   filteredClientes$: Observable<Cliente[]>;
+  modoEdicion: boolean;
 
-  constructor() {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: DialogData
+  ) {
+    this.modoEdicion = data?.modo === 'editar';
+    
     this.form = this.fb.group({
       cliente: [null, Validators.required],
       importe: [null, [Validators.required, Validators.min(1)]],
-      comprobante: [null, Validators.required]
+      comprobante: [null, this.modoEdicion ? null : Validators.required]
     });
 
+    // Inicializar los clientes
     this.engancheService.getClientes().subscribe(clientes => {
       this.clientes = clientes.filter(cliente => cliente.activo);
+      
+      // Si estamos en modo edición y tenemos una transferencia, buscamos el cliente
+      if (this.modoEdicion && data?.transferencia) {
+        const transferencia = data.transferencia; // Guardamos referencia local para evitar accesos undefined
+        const clienteEncontrado = clientes.find(c => c.nombre === transferencia.cliente);
+        if (clienteEncontrado) {
+          this.form.patchValue({
+            cliente: clienteEncontrado,
+            importe: transferencia.importe
+          });
+        }
+        
+        if (transferencia.comprobante) {
+          this.selectedFileName = 'Comprobante actual';
+        }
+      }
     });
 
     this.filteredClientes$ = this.form.get('cliente')!.valueChanges.pipe(
@@ -230,7 +100,6 @@ export class AgregarTransferenciaDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Asegurarse que el autocompletado no se abra automáticamente
     setTimeout(() => {
       if (this.clienteInput) {
         this.clienteInput.nativeElement.blur();
@@ -266,7 +135,38 @@ export class AgregarTransferenciaDialogComponent implements OnInit {
     if (this.form.valid) {
       const formValue = this.form.value;
       formValue.importe = Math.round(formValue.importe);
-      this.dialogRef.close(formValue);
+      
+      if (this.modoEdicion) {
+        // En modo edición, solo enviamos los campos que han sido modificados
+        const cambios: Partial<Transferencia> = {};
+        
+        if (this.form.get('cliente')?.dirty) {
+          cambios.cliente = formValue.cliente.nombre;
+        }
+        
+        if (this.form.get('importe')?.dirty) {
+          cambios.importe = formValue.importe;
+        }
+
+        if (formValue.comprobante) {
+          cambios.comprobante = URL.createObjectURL(formValue.comprobante);
+        }
+
+        // Solo cerramos el diálogo si hay cambios
+        if (Object.keys(cambios).length > 0) {
+          this.dialogRef.close({
+            modo: 'editar',
+            id: this.data?.transferencia?.id,
+            cambios
+          });
+        }
+      } else {
+        // En modo creación, enviamos todos los campos
+        this.dialogRef.close({
+          modo: 'crear',
+          datos: formValue
+        });
+      }
     }
   }
 }

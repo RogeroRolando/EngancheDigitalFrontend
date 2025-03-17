@@ -78,10 +78,10 @@ export class GestionOperadoresComponent implements OnInit {
 
   agregarOperador() {
     const dialogRef = this.dialog.open(OperadorDialogComponent, {
+      ...OperadorDialogComponent.getDialogConfig(),
       data: {
         title: 'Nuevo Operador'
-      },
-      disableClose: true
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -101,11 +101,11 @@ export class GestionOperadoresComponent implements OnInit {
 
   editarOperador(operador: Operador) {
     const dialogRef = this.dialog.open(OperadorDialogComponent, {
+      ...OperadorDialogComponent.getDialogConfig(),
       data: {
         title: 'Editar Operador',
         ...operador
-      },
-      disableClose: true
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -157,10 +157,10 @@ export class GestionOperadoresComponent implements OnInit {
 
   eliminarOperador(operador: Operador) {
     const dialogRef = this.dialog.open(ConfirmarEliminarDialogComponent, {
+      ...ConfirmarEliminarDialogComponent.getDialogConfig(),
       data: {
         nombre: operador.nombre
-      },
-      disableClose: true
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
