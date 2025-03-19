@@ -47,7 +47,7 @@
       <table mat-table [dataSource]="transferencias" class="mat-elevation-z8">
         <!-- Fecha Column -->
         <ng-container matColumnDef="fecha">
-          <th mat-header-cell *matHeaderCellDef> Fecha </th>
+          <th mat-header-cell *matHeaderCellDef> Fecha y Hora </th>
           <td mat-cell *matCellDef="let element"> {{element.fecha | date:'dd/MM/yyyy HH:mm'}} </td>
         </ng-container>
 

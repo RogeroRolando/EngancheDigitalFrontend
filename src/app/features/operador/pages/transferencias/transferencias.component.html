@@ -23,15 +23,15 @@
 
       <!-- Importe Column -->
       <ng-container matColumnDef="importe">
-        <th mat-header-cell *matHeaderCellDef>Importe</th>
-        <td mat-cell *matCellDef="let element">${{element.importe | clp}}</td>
+        <th mat-header-cell *matHeaderCellDef>Monto</th>
+        <td mat-cell *matCellDef="let element">${{element.importe | number:'1.0-0' }}</td>
       </ng-container>
 
       <!-- Estado Column -->
       <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef>Estado</th>
         <td mat-cell *matCellDef="let element">
-          <div class="estado-chip" 
+          <div class="estado-chip"
                [class.pendiente]="element.estado.toLowerCase() === 'pendiente'"
                [class.completado]="element.estado.toLowerCase() === 'completado'"
                [class.rechazado]="element.estado.toLowerCase() === 'rechazado'">
@@ -46,15 +46,15 @@
         <th mat-header-cell *matHeaderCellDef>Acciones</th>
         <td mat-cell *matCellDef="let element">
           <div class="acciones-cell">
-            <button mat-mini-fab color="primary" 
-                    (click)="verTransferencia(element)" 
-                    matTooltip="Ver comprobante" 
+            <button mat-mini-fab color="primary"
+                    (click)="verTransferencia(element)"
+                    matTooltip="Ver comprobante"
                     *ngIf="element.comprobante">
               <mat-icon>visibility</mat-icon>
             </button>
-            <button mat-mini-fab color="accent" 
-                    (click)="editarTransferencia(element)" 
-                    matTooltip="Editar" 
+            <button mat-mini-fab color="accent"
+                    (click)="editarTransferencia(element)"
+                    matTooltip="Editar"
                     *ngIf="element.estado === 'Pendiente'">
               <mat-icon>edit</mat-icon>
             </button>

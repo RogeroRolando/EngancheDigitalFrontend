@@ -92,7 +92,7 @@
         <!-- Monto Column -->
         <ng-container matColumnDef="importe">
           <th mat-header-cell *matHeaderCellDef> Monto </th>
-          <td mat-cell *matCellDef="let element"> ${{element.importe | number:'1.0-0'}} </td>
+          <td mat-cell *matCellDef="let element" class="importe"> {{element.importe | clp}} </td>
         </ng-container>
 
         <!-- Estado Column -->

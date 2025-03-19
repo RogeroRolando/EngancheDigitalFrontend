@@ -12,6 +12,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ClpPipe } from '@core/pipes/clp.pipe';
 import { EngancheService, Cliente, Transferencia, TransferenciaStats } from '@core/services/enganche.service';
 
 @Component({
@@ -33,7 +34,8 @@ import { EngancheService, Cliente, Transferencia, TransferenciaStats } from '@co
     MatChipsModule,
     MatIconModule,
     MatInputModule,
-    MatTooltipModule
+    MatTooltipModule,
+    ClpPipe
   ],
   styles: [`
     .estado-chip {
