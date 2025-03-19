@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, delay } from 'rxjs';
 
 export type EstadoTransferencia = 'Pendiente' | 'Completado' | 'Rechazado';
 export type TipoActividad = 'Transferencia' | 'Registro';
@@ -74,7 +74,8 @@ export class EngancheService {
       cliente: 'Juan Pérez',
       clienteId: 1,
       importe: 50000,
-      estado: 'Pendiente'
+      estado: 'Pendiente',
+      comprobante: '/assets/images/comprobante1.jpg'
     },
     {
       id: 2,
@@ -83,7 +84,7 @@ export class EngancheService {
       clienteId: 1,
       importe: 75000,
       estado: 'Completado',
-      comprobante: 'assets/images/comprobante1.jpg'
+      comprobante: '/assets/images/comprobante2.jpg'
     },
     {
       id: 3,
@@ -168,7 +169,7 @@ export class EngancheService {
       cliente: 'Carlos Rodríguez',
       importe: 150000,
       estado: 'Pendiente',
-      comprobante: './assets/images/comprobante1.jpg'
+      comprobante: '/assets/images/comprobante1.jpg'
     },
     {
       id: 2,
@@ -177,7 +178,7 @@ export class EngancheService {
       cliente: 'Ana Silva',
       importe: 230000,
       estado: 'Pendiente',
-      comprobante: './assets/images/comprobante2.jpg'
+      comprobante: '/assets/images/comprobante2.jpg'
     },
     {
       id: 3,
@@ -186,7 +187,7 @@ export class EngancheService {
       cliente: 'Pedro Martínez',
       importe: 180000,
       estado: 'Pendiente',
-      comprobante: './assets/images/comprobante3.jpg'
+      comprobante: '/assets/images/comprobante3.jpg'
     },
     {
       id: 4,
@@ -195,7 +196,7 @@ export class EngancheService {
       cliente: 'María González',
       importe: 120000,
       estado: 'Pendiente',
-      comprobante: './assets/images/comprobante4.jpg'
+      comprobante: '/assets/images/comprobante4.jpg'
     },
     // 3 Transferencias Completadas
     {
@@ -205,7 +206,7 @@ export class EngancheService {
       cliente: 'Luis Sánchez',
       importe: 90000,
       estado: 'Completado',
-      comprobante: './assets/images/comprobante5.jpg'
+      comprobante: '/assets/images/comprobante5.jpg'
     },
     {
       id: 6,
@@ -214,7 +215,7 @@ export class EngancheService {
       cliente: 'Ana Torres',
       importe: 175000,
       estado: 'Completado',
-      comprobante: './assets/images/comprobante6.jpg'
+      comprobante: '/assets/images/comprobante6.jpg'
     },
     {
       id: 7,
@@ -223,7 +224,7 @@ export class EngancheService {
       cliente: 'Jorge Muñoz',
       importe: 145000,
       estado: 'Completado',
-      comprobante: './assets/images/comprobante7.jpg'
+      comprobante: '/assets/images/comprobante7.jpg'
     },
     // 5 Transferencias Rechazadas
     {
@@ -233,7 +234,7 @@ export class EngancheService {
       cliente: 'Carmen Rojas',
       importe: 200000,
       estado: 'Rechazado',
-      comprobante: './assets/images/comprobante8.jpg'
+      comprobante: '/assets/images/comprobante8.jpg'
     },
     {
       id: 9,
@@ -242,7 +243,7 @@ export class EngancheService {
       cliente: 'Roberto Díaz',
       importe: 160000,
       estado: 'Rechazado',
-      comprobante: './assets/images/comprobante9.jpg'
+      comprobante: '/assets/images/comprobante9.jpg'
     },
     {
       id: 10,
@@ -251,7 +252,7 @@ export class EngancheService {
       cliente: 'Patricia Vega',
       importe: 135000,
       estado: 'Rechazado',
-      comprobante: './assets/images/comprobante10.jpg'
+      comprobante: '/assets/images/comprobante10.jpg'
     },
     {
       id: 11,
@@ -260,7 +261,7 @@ export class EngancheService {
       cliente: 'Fernando Castro',
       importe: 190000,
       estado: 'Rechazado',
-      comprobante: './assets/images/comprobante11.jpg'
+      comprobante: '/assets/images/comprobante11.jpg'
     },
     {
       id: 12,
@@ -269,7 +270,7 @@ export class EngancheService {
       cliente: 'Laura Vargas',
       importe: 170000,
       estado: 'Rechazado',
-      comprobante: './assets/images/comprobante12.jpg'
+      comprobante: '/assets/images/comprobante12.jpg'
     }
   ];
 
@@ -351,15 +352,18 @@ export class EngancheService {
 
   // Métodos para Transferencias
   getTransferencias(): Observable<Transferencia[]> {
-    return of(this.transferencias);
+    // Simular un pequeño delay para emular una llamada al servidor
+    return of([...this.transferencias].sort((a, b) => 
+      new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+    )).pipe(delay(300));
   }
 
   getTransferenciasRecientes(limite: number = 3): Observable<Transferencia[]> {
-    return of(this.transferencias.slice(0, limite));
+    return of(this.transferencias.slice(0, limite)).pipe(delay(300));
   }
 
   getTransferenciasPorCliente(clienteId: number): Observable<Transferencia[]> {
-    return of(this.transferencias.filter(t => t.clienteId === clienteId));
+    return of(this.transferencias.filter(t => t.clienteId === clienteId)).pipe(delay(300));
   }
 
   getTransferenciasPorFecha(fecha: Date): Observable<Transferencia[]> {
@@ -371,76 +375,111 @@ export class EngancheService {
     return of(this.transferencias.filter(t => {
       const fechaTransferencia = new Date(t.fecha);
       return fechaTransferencia >= fechaInicio && fechaTransferencia <= fechaFin;
-    }));
+    })).pipe(delay(300));
   }
 
   getTransferenciasValidacion(): Observable<Transferencia[]> {
-    return of(this.transferenciasValidacion);
+    return of(this.transferenciasValidacion).pipe(delay(300));
   }
 
   actualizarEstadoTransferenciaValidacion(id: number, estado: EstadoTransferencia): Observable<boolean> {
     const index = this.transferenciasValidacion.findIndex(t => t.id === id);
     if (index !== -1) {
       this.transferenciasValidacion[index].estado = estado;
-      return of(true);
+      return of(true).pipe(delay(300));
     }
-    return of(false);
+    return of(false).pipe(delay(300));
   }
 
   agregarTransferencia(transferencia: Omit<Transferencia, 'id'>): Observable<Transferencia> {
     const nuevaTransferencia: Transferencia = {
       ...transferencia,
-      id: this.transferencias.length + 1
+      id: Math.max(...this.transferencias.map(t => t.id), 0) + 1,
+      fecha: new Date().toISOString().replace('T', ' ').substring(0, 19)
     };
-    this.transferencias.unshift(nuevaTransferencia);
+    
+    // Validar y normalizar el comprobante si existe
+    if (nuevaTransferencia.comprobante !== undefined && nuevaTransferencia.comprobante !== null) {
+      if (!nuevaTransferencia.comprobante.startsWith('/') && !nuevaTransferencia.comprobante.startsWith('data:')) {
+        nuevaTransferencia.comprobante = '/' + nuevaTransferencia.comprobante;
+      }
+    }
+    
+    // Agregar al inicio del arreglo
+    this.transferencias = [nuevaTransferencia, ...this.transferencias];
     this.actualizarEstadisticas();
-    return of(nuevaTransferencia);
+    
+    return of(nuevaTransferencia).pipe(delay(300));
   }
 
   editarTransferencia(id: number, transferencia: Partial<Transferencia>): Observable<Transferencia> {
     const index = this.transferencias.findIndex(t => t.id === id);
     if (index !== -1) {
-      const transferenciaActualizada: Transferencia = {
+      // Asegurar que los números sean números
+      if (typeof transferencia.importe === 'string') {
+        transferencia.importe = Number(transferencia.importe);
+      }
+
+      // Validar y normalizar el comprobante si existe
+      if (transferencia.comprobante !== undefined && transferencia.comprobante !== null) {
+        if (!transferencia.comprobante.startsWith('/') && !transferencia.comprobante.startsWith('data:')) {
+          transferencia.comprobante = '/' + transferencia.comprobante;
+        }
+      }
+
+      // Crear una nueva instancia con los cambios
+      const transferenciaActualizada = {
         ...this.transferencias[index],
         ...transferencia,
-        id // Aseguramos que el ID no cambie
+        id // Mantener el ID original
       };
-      this.transferencias[index] = transferenciaActualizada;
-      return of(transferenciaActualizada);
+      
+      // Actualizar el arreglo de forma inmutable
+      this.transferencias = [
+        ...this.transferencias.slice(0, index),
+        transferenciaActualizada,
+        ...this.transferencias.slice(index + 1)
+      ];
+      
+      // Actualizar estadísticas
+      this.actualizarEstadisticas();
+      
+      // Simular delay de servidor y devolver la transferencia actualizada
+      return of(transferenciaActualizada).pipe(delay(300));
     }
     throw new Error('Transferencia no encontrada');
   }
 
   // Métodos para Clientes
   getClientes(): Observable<Cliente[]> {
-    return of(this.clientes);
+    return of(this.clientes).pipe(delay(300));
   }
 
   getClientesActivos(): Observable<Cliente[]> {
-    return of(this.clientes.filter(cliente => cliente.activo));
+    return of(this.clientes.filter(cliente => cliente.activo)).pipe(delay(300));
   }
 
   // Métodos para Operadores
   getOperadores(): Observable<Operador[]> {
-    return of(this.operadores);
+    return of(this.operadores).pipe(delay(300));
   }
 
   getOperadoresActivos(): Observable<Operador[]> {
-    return of(this.operadores.filter(operador => operador.activo));
+    return of(this.operadores.filter(operador => operador.activo)).pipe(delay(300));
   }
 
   // Métodos para Actividades
   getActividades(): Observable<Actividad[]> {
-    return of(this.actividades);
+    return of(this.actividades).pipe(delay(300));
   }
 
   getActividadesRecientes(limite: number = 3): Observable<Actividad[]> {
-    return of(this.actividades.slice(0, limite));
+    return of(this.actividades.slice(0, limite)).pipe(delay(300));
   }
 
   // Métodos para Dashboard
   getDashboardStats(): Observable<DashboardStats> {
-    return of(this.dashboardStats);
+    return of(this.dashboardStats).pipe(delay(300));
   }
 
   getDashboardEncargadoStats(): Observable<DashboardEncargadoStats> {
@@ -448,7 +487,7 @@ export class EngancheService {
       operadoresActivos: this.operadores.filter(op => op.activo).length,
       clientesTotales: this.clientes.length,
       transferenciasPendientes: this.transferencias.filter(t => t.estado === 'Pendiente').length
-    });
+    }).pipe(delay(300));
   }
 
   getTransferenciasStats(transferencias: Transferencia[]): TransferenciaStats {
@@ -461,12 +500,13 @@ export class EngancheService {
 
   // Métodos privados de utilidad
   private actualizarEstadisticas(): void {
+    const stats = this.getTransferenciasStats(this.transferencias);
     this.dashboardStats = {
       ...this.dashboardStats,
-      transferenciasPendientes: this.transferencias.filter(t => t.estado === 'Pendiente').length,
+      transferenciasPendientes: stats.pendientes,
       totalTransferido: this.transferencias
         .filter(t => t.estado === 'Completado')
-        .reduce((total, t) => total + t.importe, 0)
+        .reduce((sum, t) => Number(t.importe) || 0, 0)
     };
   }
 }

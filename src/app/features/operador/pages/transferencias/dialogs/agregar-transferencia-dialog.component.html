@@ -1,22 +1,27 @@
-<app-base-dialog [title]="modoEdicion ? 'Editar Transferencia' : 'Agregar Nueva Transferencia'">
+<app-base-dialog [title]="modoEdicion ? 'Editar Transferencia' : 'Agregar Nueva Transferencia'" class="transferencia-dialog">
   <form [formGroup]="form" class="dialog-form">
     <div class="form-field">
       <label>Cliente*</label>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-icon matPrefix class="prefix-icon">person_search</mat-icon>
         <input matInput
                [matAutocomplete]="auto"
                formControlName="cliente"
-               placeholder="Buscar cliente..."
+               placeholder="Ingrese nombre o RUT del cliente..."
                (click)="$event.stopPropagation()"
                #clienteInput>
-        <mat-icon matSuffix>person</mat-icon>
+        <button mat-icon-button matSuffix *ngIf="form.get('cliente')?.value" (click)="limpiarCliente($event)">
+          <mat-icon>close</mat-icon>
+        </button>
       </mat-form-field>
       <mat-autocomplete #auto="matAutocomplete"
                       [displayWith]="displayFn"
-                      [autoActiveFirstOption]="false"
-                      (opened)="false">
-        <mat-option *ngFor="let cliente of filteredClientes$ | async" [value]="cliente">
-          {{cliente.nombre}} - {{cliente.rut}}
+                      [autoActiveFirstOption]="false">
+        <mat-option *ngFor="let cliente of filteredClientes$ | async" [value]="cliente" class="cliente-option">
+          <div class="cliente-info">
+            <span class="cliente-nombre">{{cliente.nombre}}</span>
+            <span class="cliente-rut">{{cliente.rut}}</span>
+          </div>
         </mat-option>
       </mat-autocomplete>
       <mat-error *ngIf="form.get('cliente')?.hasError('required') && form.get('cliente')?.touched">
@@ -26,14 +31,15 @@
 
     <div class="form-field">
       <label>Importe (CLP)*</label>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-icon matPrefix class="prefix-icon">payments</mat-icon>
         <input matInput
-               type="number"
-               formControlName="importe"
-               min="1"
-               step="1000"
-               class="number-input">
-        <mat-icon matSuffix>payments</mat-icon>
+               type="text"
+               #importeInput
+               (input)="onImporteInput($event)"
+               class="number-input text-right roboto-mono"
+               maxlength="15"
+               placeholder="$ 0">
       </mat-form-field>
       <mat-error *ngIf="form.get('importe')?.hasError('required') && form.get('importe')?.touched">
         El importe es requerido
@@ -45,42 +51,56 @@
 
     <div class="form-field">
       <label>Comprobante{{ modoEdicion ? '' : '*' }}</label>
-      <div class="file-input-container">
-        <button mat-stroked-button
-                type="button"
-                (click)="fileInput.click()"
-                class="upload-button">
-          <mat-icon>upload</mat-icon>
-          {{ modoEdicion ? 'Cambiar Comprobante' : 'Subir Comprobante' }}
-        </button>
-        <input type="file"
-               #fileInput
-               (change)="onFileSelected($event)"
-               accept="image/*"
-               style="display: none">
-      </div>
-      <div class="file-preview" *ngIf="selectedFileName">
-        <span class="file-name">{{selectedFileName}}</span>
-        <button mat-icon-button color="warn" (click)="removeFile($event)">
-          <mat-icon>close</mat-icon>
-        </button>
+      <div class="file-upload-container">
+        <div class="file-drop-zone" 
+             (dragover)="onDragOver($event)" 
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event)"
+             [class.drag-over]="isDragOver">
+          <input type="file"
+                 #fileInput
+                 (change)="onFileSelected($event)"
+                 accept="image/*"
+                 style="display: none">
+          <div class="upload-content" *ngIf="!selectedFileName">
+            <mat-icon class="upload-icon">cloud_upload</mat-icon>
+            <span class="upload-text">Arrastra una imagen o</span>
+            <button mat-stroked-button
+                    type="button"
+                    (click)="fileInput.click()"
+                    class="upload-button">
+              Seleccionar archivo
+            </button>
+            <span class="file-types">Formatos permitidos: JPG, PNG</span>
+          </div>
+          <div class="file-preview" *ngIf="selectedFileName">
+            <div class="preview-content">
+              <mat-icon class="file-icon">image</mat-icon>
+              <span class="file-name">{{selectedFileName}}</span>
+              <button mat-icon-button color="warn" (click)="removeFile($event)" class="remove-file">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       <mat-error *ngIf="form.get('comprobante')?.hasError('required') && form.get('comprobante')?.touched">
         El comprobante es requerido
       </mat-error>
     </div>
+
+    <div *ngIf="error" class="error-message">
+      <mat-icon>error</mat-icon>
+      <span>{{error}}</span>
+    </div>
   </form>
 
   <div dialog-actions>
-    <button mat-button mat-dialog-close>
+    <button mat-button (click)="cancelar()" [disabled]="isLoading">
       Cancelar
     </button>
-    <button mat-flat-button
-            color="primary"
-            [disabled]="!form.valid"
-            (click)="guardar()">
-      <mat-icon>{{ modoEdicion ? 'save' : 'add' }}</mat-icon>
-      {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+    <button mat-raised-button color="primary" (click)="guardar()" [disabled]="!form.valid || isLoading">
+      {{ isLoading ? 'Guardando...' : (modoEdicion ? 'Actualizar' : 'Guardar') }}
     </button>
   </div>
 </app-base-dialog>

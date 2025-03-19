@@ -1,3 +1,191 @@
+.transferencia-dialog {
+  .dialog-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem 0;
+
+    .form-field {
+      .full-width {
+        width: 100%;
+      }
+
+      .prefix-icon {
+        color: rgba(0, 0, 0, 0.54);
+        margin-right: 8px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      .cliente-option {
+        .cliente-info {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          .cliente-nombre {
+            font-weight: 500;
+          }
+
+          .cliente-rut {
+            font-size: 0.9em;
+            color: rgba(0, 0, 0, 0.54);
+          }
+        }
+      }
+
+      // Estilos específicos para el campo de importe
+      .number-input {
+        font-family: 'Roboto Mono', monospace !important;
+        text-align: right;
+        padding-right: 8px;
+        min-width: 180px; // Asegurar espacio suficiente para números grandes
+
+        // Ocultar los botones de incremento/decremento
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          appearance: none;
+          margin: 0;
+        }
+
+        &[type=number] {
+          -moz-appearance: textfield;
+          appearance: textfield;
+        }
+      }
+
+      .importe-preview {
+        font-family: 'Roboto Mono', monospace !important;
+        font-size: 0.9em;
+        color: rgba(0, 0, 0, 0.87);
+        margin-left: 8px;
+        min-width: 120px;
+        text-align: right;
+      }
+
+      .file-upload-container {
+        .file-drop-zone {
+          border: 2px dashed rgba(0, 0, 0, 0.12);
+          border-radius: 4px;
+          padding: 1.5rem;
+          transition: all 0.2s ease;
+          background-color: #fafafa;
+          cursor: pointer;
+
+          &.drag-over {
+            border-color: var(--primary-color);
+            background-color: rgba(var(--primary-color-rgb), 0.04);
+          }
+
+          .upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            text-align: center;
+
+            .upload-icon {
+              font-size: 48px;
+              width: 48px;
+              height: 48px;
+              color: rgba(0, 0, 0, 0.54);
+            }
+
+            .upload-text {
+              color: rgba(0, 0, 0, 0.87);
+            }
+
+            .upload-button {
+              margin: 0.5rem 0;
+              min-width: 180px;
+            }
+
+            .file-types {
+              font-size: 0.85em;
+              color: rgba(0, 0, 0, 0.54);
+            }
+          }
+
+          .file-preview {
+            .preview-content {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              padding: 0.5rem;
+              background-color: #fff;
+              border-radius: 4px;
+              border: 1px solid rgba(0, 0, 0, 0.12);
+
+              .file-icon {
+                color: rgba(0, 0, 0, 0.54);
+              }
+
+              .file-name {
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 0.9em;
+              }
+
+              .remove-file {
+                margin-left: auto;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .error-message {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      border-radius: 4px;
+      background-color: rgba(var(--warn-color-rgb), 0.04);
+      border: 1px solid rgba(var(--warn-color-rgb), 0.12);
+      color: var(--warn-color);
+
+      mat-icon {
+        color: var(--warn-color);
+      }
+
+      span {
+        flex: 1;
+        font-size: 0.9em;
+      }
+    }
+  }
+
+  [dialog-actions] {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    margin-top: 1rem;
+
+    .cancel-button {
+      color: rgba(0, 0, 0, 0.54);
+    }
+
+    .save-button {
+      min-width: 120px;
+
+      mat-spinner {
+        margin: 0 auto;
+      }
+    }
+  }
+}
+
 .dialog-form {
   display: flex;
   flex-direction: column;

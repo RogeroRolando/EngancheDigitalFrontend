@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -107,7 +107,8 @@ export class TransferenciasComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private engancheService: EngancheService
+    private engancheService: EngancheService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -115,8 +116,18 @@ export class TransferenciasComponent implements OnInit {
   }
 
   private cargarTransferencias(): void {
-    this.engancheService.getTransferencias().subscribe(transferencias => {
-      this.transferencias = transferencias;
+    this.engancheService.getTransferencias().subscribe({
+      next: (transferencias) => {
+        // Asegurar que los importes sean números
+        this.transferencias = transferencias.map(t => ({
+          ...t,
+          importe: Number(t.importe)
+        }));
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al cargar transferencias:', error);
+      }
     });
   }
 
@@ -135,25 +146,16 @@ export class TransferenciasComponent implements OnInit {
 
   agregarTransferencia() {
     const dialogRef = this.dialog.open(AgregarTransferenciaDialogComponent, {
+      width: '600px',
+      disableClose: false,
       data: {
         modo: 'crear'
       }
     });
     
     dialogRef.afterClosed().subscribe(result => {
-      if (result && result.modo === 'crear') {
-        const nuevaTransferencia: Omit<Transferencia, 'id'> = {
-          fecha: new Date().toLocaleString(),
-          cliente: result.datos.cliente.nombre,
-          importe: result.datos.importe,
-          estado: 'Pendiente',
-          comprobante: URL.createObjectURL(result.datos.comprobante)
-        };
-        
-        this.engancheService.agregarTransferencia(nuevaTransferencia)
-          .subscribe(transferencia => {
-            this.transferencias = [transferencia, ...this.transferencias];
-          });
+      if (result === true) {
+        this.cargarTransferencias();
       }
     });
   }
@@ -169,6 +171,8 @@ export class TransferenciasComponent implements OnInit {
 
   editarTransferencia(transferencia: Transferencia) {
     const dialogRef = this.dialog.open(AgregarTransferenciaDialogComponent, {
+      width: '600px',
+      disableClose: false,
       data: {
         modo: 'editar',
         transferencia: transferencia
@@ -176,15 +180,8 @@ export class TransferenciasComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result && result.modo === 'editar') {
-        this.engancheService.editarTransferencia(result.id, result.cambios)
-          .subscribe(transferenciaActualizada => {
-            const index = this.transferencias.findIndex(t => t.id === result.id);
-            if (index !== -1) {
-              this.transferencias[index] = transferenciaActualizada;
-              this.transferencias = [...this.transferencias]; // Forzar actualización de la vista
-            }
-          });
+      if (result === true) {
+        this.cargarTransferencias();
       }
     });
   }

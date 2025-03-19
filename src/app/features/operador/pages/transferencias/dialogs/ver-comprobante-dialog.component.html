@@ -1,6 +1,14 @@
 <app-base-dialog title="Comprobante de Transferencia">
   <div class="comprobante-container">
-    <img [src]="data.comprobante" alt="Comprobante" class="comprobante-img">
+    <ng-container *ngIf="!error; else mensajeError">
+      <img [src]="imagenSegura" alt="Comprobante de transferencia" class="comprobante-img">
+    </ng-container>
+    <ng-template #mensajeError>
+      <div class="error-container">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ error }}</p>
+      </div>
+    </ng-template>
   </div>
   <div dialog-actions>
     <button mat-button (click)="cerrar()">
