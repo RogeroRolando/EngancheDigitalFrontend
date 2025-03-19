@@ -6,7 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Cliente } from '@core/services/enganche.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDividerModule } from '@angular/material/divider';
+import { BaseDialogComponent } from '@core/components/base-dialog/base-dialog.component';
+import { Cliente, EngancheService } from '@core/services/enganche.service';
 
 interface DialogData {
   title: string;
@@ -23,25 +26,45 @@ interface DialogData {
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatSelectModule,
+    MatDividerModule,
+    BaseDialogComponent
   ],
   templateUrl: './cliente-dialog.component.html',
   styleUrls: ['./cliente-dialog.component.scss']
 })
 export class ClienteDialogComponent {
   clienteForm: FormGroup;
+  bancos: { id: number; nombre: string }[] = [];
+  tiposCuenta: { id: number; nombre: string }[] = [];
 
   constructor(
     private dialogRef: MatDialogRef<ClienteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private engancheService: EngancheService
   ) {
     this.clienteForm = this.fb.group({
       nombre: ['', Validators.required],
       rut: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{3}\.\d{3}-[\dkK]$/)]],
       email: ['', [Validators.required, Validators.email]],
       telefono: ['', Validators.required],
-      activo: [true]
+      activo: [true],
+      datosBancarios: this.fb.group({
+        banco: [null, Validators.required],
+        tipoCuenta: [null, Validators.required],
+        numeroCuenta: ['', [Validators.required, Validators.pattern(/^\d+$/)]]
+      })
+    });
+
+    // Cargar datos bancarios
+    this.engancheService.getBancos().subscribe(bancos => {
+      this.bancos = bancos;
+    });
+
+    this.engancheService.getTiposCuenta().subscribe(tipos => {
+      this.tiposCuenta = tipos;
     });
 
     if (data.cliente) {

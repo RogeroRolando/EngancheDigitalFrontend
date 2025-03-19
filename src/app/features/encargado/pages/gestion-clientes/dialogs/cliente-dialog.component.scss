@@ -26,3 +26,35 @@
     min-width: 100px;
   }
 }
+
+.form-section {
+  padding: 16px 0;
+
+  h3 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.section-divider {
+  margin: 24px 0;
+}
+
+mat-checkbox {
+  margin-top: 8px;
+  display: block;
+}
+
+[dialog-actions] {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 16px;
+}

@@ -1,12 +1,13 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { Cliente } from '@core/services/enganche.service';
-import { EstadoBadgeComponent } from '../../../../../shared/components/estado-badge/estado-badge.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Cliente, EngancheService } from '@core/services/enganche.service';
+import { EstadoBadgeComponent } from '@shared/components/estado-badge/estado-badge.component';
 import { TableContainerComponent } from '../../../../../shared/components/table-container/table-container.component';
 
 @Component({
@@ -15,26 +16,79 @@ import { TableContainerComponent } from '../../../../../shared/components/table-
   imports: [
     CommonModule,
     MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    MatPaginatorModule,
     EstadoBadgeComponent,
     TableContainerComponent
   ],
   templateUrl: './clientes-table.component.html',
   styleUrls: ['./clientes-table.component.scss']
 })
-export class ClientesTableComponent {
+export class ClientesTableComponent implements OnInit {
   @Input() clientes: Cliente[] = [];
   @Input() pageSize: number = 10;
-  @Output() onEdit = new EventEmitter<Cliente>();
-  @Output() onToggleEstado = new EventEmitter<Cliente>();
-  @Output() onPageChange = new EventEmitter<PageEvent>();
+  @Input() totalClientes: number = 0;
+  @Input() currentPage: number = 0;
 
-  columnas: string[] = ['nombre', 'rut', 'email', 'estado', 'acciones'];
+  @Output() editarCliente = new EventEmitter<Cliente>();
+  @Output() eliminarCliente = new EventEmitter<Cliente>();
+  @Output() pageChange = new EventEmitter<PageEvent>();
+  @Output() sortChange = new EventEmitter<Sort>();
 
-  onPageChanged(event: PageEvent): void {
-    this.onPageChange.emit(event);
+  displayedColumns: string[] = [
+    'nombre',
+    'rut',
+    'email',
+    'banco',
+    'tipoCuenta',
+    'numeroCuenta',
+    'estado',
+    'acciones'
+  ];
+
+  private bancos: { id: number; nombre: string }[] = [];
+  private tiposCuenta: { id: number; nombre: string }[] = [];
+
+  constructor(private engancheService: EngancheService) {}
+
+  ngOnInit() {
+    this.engancheService.getBancos().subscribe(bancos => {
+      this.bancos = bancos;
+    });
+
+    this.engancheService.getTiposCuenta().subscribe(tipos => {
+      this.tiposCuenta = tipos;
+    });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageChange.emit(event);
+  }
+
+  onSort(sort: Sort): void {
+    this.sortChange.emit(sort);
+  }
+
+  onEditar(cliente: Cliente): void {
+    this.editarCliente.emit(cliente);
+  }
+
+  onEliminar(cliente: Cliente): void {
+    this.eliminarCliente.emit(cliente);
+  }
+
+  getNombreBanco(bancoId?: number): string {
+    if (!bancoId) return 'No especificado';
+    const banco = this.bancos.find(b => b.id === bancoId);
+    return banco ? banco.nombre : 'No especificado';
+  }
+
+  getNombreTipoCuenta(tipoId?: number): string {
+    if (!tipoId) return 'No especificado';
+    const tipo = this.tiposCuenta.find(t => t.id === tipoId);
+    return tipo ? tipo.nombre : 'No especificado';
   }
 }

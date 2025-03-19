@@ -1,5 +1,5 @@
-<div class="content-container">
-  <div class="header-container">
+<div class="container">
+  <div class="header">
     <h1>Gestión de Clientes</h1>
     <button mat-raised-button color="primary" (click)="agregarCliente()">
       <mat-icon>add</mat-icon>
@@ -9,15 +9,19 @@
 
   <mat-form-field appearance="outline" class="search-field">
     <mat-label>Buscar cliente</mat-label>
-    <input matInput [(ngModel)]="searchTerm" (ngModelChange)="filtrarClientes()" placeholder="Nombre, RUT o correo">
+    <input matInput [(ngModel)]="searchTerm" (ngModelChange)="filtrarClientes()" 
+           placeholder="Buscar por nombre, RUT o correo">
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 
   <app-clientes-table
     [clientes]="clientesFiltradosPaginados"
     [pageSize]="pageSize"
-    (onEdit)="editarCliente($event)"
-    (onToggleEstado)="toggleEstadoCliente($event)"
-    (onPageChange)="onPageChange($event)">
+    [totalClientes]="clientesFiltrados.length"
+    [currentPage]="currentPage"
+    (editarCliente)="editarCliente($event)"
+    (eliminarCliente)="eliminarCliente($event)"
+    (pageChange)="onPageChange($event)"
+    (sortChange)="onSortChange($event)">
   </app-clientes-table>
 </div>

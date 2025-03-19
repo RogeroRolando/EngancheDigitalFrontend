@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, delay } from 'rxjs';
+import { Observable, of, delay, throwError } from 'rxjs';
 
 export type EstadoTransferencia = 'Pendiente' | 'Completado' | 'Rechazado';
 export type TipoActividad = 'Transferencia' | 'Registro';
@@ -37,6 +37,11 @@ export interface Cliente {
   telefono?: string;
   rut?: string;
   activo: boolean;
+  datosBancarios?: {
+    banco: number;
+    tipoCuenta: number;
+    numeroCuenta: string;
+  };
 }
 
 export interface Operador {
@@ -274,12 +279,91 @@ export class EngancheService {
     }
   ];
 
+  private bancos: { id: number; nombre: string }[] = [
+    { id: 1, nombre: 'Banco de Chile' },
+    { id: 2, nombre: 'Banco Santander' },
+    { id: 3, nombre: 'Banco Estado' },
+    { id: 4, nombre: 'Banco BCI' },
+    { id: 5, nombre: 'Banco Scotiabank' },
+    { id: 6, nombre: 'Banco Itaú' },
+    { id: 7, nombre: 'Banco Security' },
+    { id: 8, nombre: 'Banco Falabella' },
+    { id: 9, nombre: 'Banco Ripley' },
+    { id: 10, nombre: 'Banco BICE' }
+  ];
+
+  private tiposCuenta: { id: number; nombre: string }[] = [
+    { id: 1, nombre: 'Cuenta Corriente' },
+    { id: 2, nombre: 'Cuenta Vista' },
+    { id: 3, nombre: 'Cuenta de Ahorro' }
+  ];
+
   private clientes: Cliente[] = [
-    { id: 1, nombre: 'Juan Pérez', rut: '12.345.678-9', email: 'juan@email.com', telefono: '+56912345678', activo: true },
-    { id: 2, nombre: 'María González', rut: '98.765.432-1', email: 'maria@email.com', telefono: '+56923456789', activo: true },
-    { id: 3, nombre: 'Carlos Rodríguez', rut: '11.222.333-4', email: 'carlos@email.com', telefono: '+56934567890', activo: true },
-    { id: 4, nombre: 'Ana Silva', rut: '44.555.666-7', email: 'ana@email.com', telefono: '+56945678901', activo: true },
-    { id: 5, nombre: 'Pedro Martínez', rut: '77.888.999-0', email: 'pedro@email.com', telefono: '+56956789012', activo: true }
+    {
+      id: 1,
+      nombre: 'Juan Pérez',
+      rut: '12.345.678-9',
+      email: 'juan.perez@email.com',
+      telefono: '+56912345678',
+      activo: true,
+      datosBancarios: {
+        banco: 1,
+        tipoCuenta: 1,
+        numeroCuenta: '00123456789'
+      }
+    },
+    {
+      id: 2,
+      nombre: 'María González',
+      rut: '11.111.111-1',
+      email: 'maria.gonzalez@email.com',
+      telefono: '+56987654321',
+      activo: true,
+      datosBancarios: {
+        banco: 3,
+        tipoCuenta: 2,
+        numeroCuenta: '987654321'
+      }
+    },
+    {
+      id: 3,
+      nombre: 'Carlos Rodríguez',
+      rut: '11.222.333-4',
+      email: 'carlos@email.com',
+      telefono: '+56934567890',
+      activo: true,
+      datosBancarios: {
+        banco: 2,
+        tipoCuenta: 1,
+        numeroCuenta: '456789123'
+      }
+    },
+    {
+      id: 4,
+      nombre: 'Ana Silva',
+      rut: '44.555.666-7',
+      email: 'ana@email.com',
+      telefono: '+56945678901',
+      activo: true,
+      datosBancarios: {
+        banco: 4,
+        tipoCuenta: 3,
+        numeroCuenta: '789123456'
+      }
+    },
+    {
+      id: 5,
+      nombre: 'Pedro Martínez',
+      rut: '77.888.999-0',
+      email: 'pedro@email.com',
+      telefono: '+56956789012',
+      activo: true,
+      datosBancarios: {
+        banco: 5,
+        tipoCuenta: 2,
+        numeroCuenta: '321654987'
+      }
+    }
   ];
 
   private operadores: Operador[] = [
@@ -452,34 +536,58 @@ export class EngancheService {
 
   // Métodos para Clientes
   getClientes(): Observable<Cliente[]> {
-    return of(this.clientes).pipe(delay(300));
+    return of(this.clientes);
   }
 
   getClientesActivos(): Observable<Cliente[]> {
-    return of(this.clientes.filter(cliente => cliente.activo)).pipe(delay(300));
+    return of(this.clientes.filter(cliente => cliente.activo));
+  }
+
+  agregarCliente(cliente: Omit<Cliente, 'id'>): Observable<Cliente> {
+    const nuevoCliente: Cliente = {
+      ...cliente,
+      id: this.clientes.length + 1,
+      activo: true
+    };
+    this.clientes.push(nuevoCliente);
+    return of(nuevoCliente);
+  }
+
+  editarCliente(id: number, datos: Partial<Cliente>): Observable<Cliente> {
+    const index = this.clientes.findIndex(c => c.id === id);
+    if (index === -1) {
+      return throwError(() => new Error('Cliente no encontrado'));
+    }
+
+    this.clientes[index] = {
+      ...this.clientes[index],
+      ...datos
+    };
+
+    return of(this.clientes[index]);
   }
 
   // Métodos para Operadores
   getOperadores(): Observable<Operador[]> {
-    return of(this.operadores).pipe(delay(300));
+    return of(this.operadores);
   }
 
   getOperadoresActivos(): Observable<Operador[]> {
-    return of(this.operadores.filter(operador => operador.activo)).pipe(delay(300));
+    return of(this.operadores.filter(operador => operador.activo));
   }
 
   // Métodos para Actividades
   getActividades(): Observable<Actividad[]> {
-    return of(this.actividades).pipe(delay(300));
+    return of(this.actividades);
   }
 
   getActividadesRecientes(limite: number = 3): Observable<Actividad[]> {
-    return of(this.actividades.slice(0, limite)).pipe(delay(300));
+    return of(this.actividades.slice(0, limite));
   }
 
   // Métodos para Dashboard
   getDashboardStats(): Observable<DashboardStats> {
-    return of(this.dashboardStats).pipe(delay(300));
+    return of(this.dashboardStats);
   }
 
   getDashboardEncargadoStats(): Observable<DashboardEncargadoStats> {
@@ -487,7 +595,7 @@ export class EngancheService {
       operadoresActivos: this.operadores.filter(op => op.activo).length,
       clientesTotales: this.clientes.length,
       transferenciasPendientes: this.transferencias.filter(t => t.estado === 'Pendiente').length
-    }).pipe(delay(300));
+    });
   }
 
   getTransferenciasStats(transferencias: Transferencia[]): TransferenciaStats {
@@ -496,6 +604,14 @@ export class EngancheService {
       completados: transferencias.filter(t => t.estado === 'Completado').length,
       rechazados: transferencias.filter(t => t.estado === 'Rechazado').length
     };
+  }
+
+  getBancos(): Observable<{ id: number; nombre: string }[]> {
+    return of(this.bancos);
+  }
+
+  getTiposCuenta(): Observable<{ id: number; nombre: string }[]> {
+    return of(this.tiposCuenta);
   }
 
   // Métodos privados de utilidad

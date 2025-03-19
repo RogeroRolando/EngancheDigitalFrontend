@@ -1,51 +1,101 @@
-<h2 mat-dialog-title>{{ data.title }}</h2>
+<app-base-dialog [title]="data.title">
+  <form [formGroup]="clienteForm" (ngSubmit)="onSubmit()">
+    <!-- Datos personales -->
+    <div class="form-section">
+      <h3>Datos Personales</h3>
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre Completo</mat-label>
+        <input matInput formControlName="nombre" placeholder="Ingrese nombre completo">
+        <mat-error *ngIf="clienteForm.get('nombre')?.hasError('required')">
+          El nombre es requerido
+        </mat-error>
+      </mat-form-field>
 
-<mat-dialog-content class="dialog-content">
-  <form [formGroup]="clienteForm" class="form-container">
-    <mat-form-field appearance="outline">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="nombre" placeholder="Ingrese el nombre">
-      <mat-error *ngIf="clienteForm.get('nombre')?.hasError('required')">
-        El nombre es requerido
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>RUT</mat-label>
+        <input matInput formControlName="rut" placeholder="Ej: 12.345.678-9">
+        <mat-error *ngIf="clienteForm.get('rut')?.hasError('required')">
+          El RUT es requerido
+        </mat-error>
+        <mat-error *ngIf="clienteForm.get('rut')?.hasError('pattern')">
+          El formato del RUT debe ser XX.XXX.XXX-X
+        </mat-error>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>RUT</mat-label>
-      <input matInput formControlName="rut" placeholder="Ingrese el RUT">
-      <mat-error *ngIf="clienteForm.get('rut')?.hasError('required')">
-        El RUT es requerido
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Correo Electrónico</mat-label>
+        <input matInput formControlName="email" placeholder="ejemplo@correo.com" type="email">
+        <mat-error *ngIf="clienteForm.get('email')?.hasError('required')">
+          El correo electrónico es requerido
+        </mat-error>
+        <mat-error *ngIf="clienteForm.get('email')?.hasError('email')">
+          Ingrese un correo electrónico válido
+        </mat-error>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Correo electrónico</mat-label>
-      <input matInput formControlName="email" placeholder="Ingrese el correo" type="email">
-      <mat-error *ngIf="clienteForm.get('email')?.hasError('required')">
-        El correo es requerido
-      </mat-error>
-      <mat-error *ngIf="clienteForm.get('email')?.hasError('email')">
-        Ingrese un correo válido
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Teléfono</mat-label>
+        <input matInput formControlName="telefono" placeholder="+56912345678">
+        <mat-error *ngIf="clienteForm.get('telefono')?.hasError('required')">
+          El teléfono es requerido
+        </mat-error>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Teléfono</mat-label>
-      <input matInput formControlName="telefono" placeholder="Ingrese el teléfono">
-      <mat-error *ngIf="clienteForm.get('telefono')?.hasError('required')">
-        El teléfono es requerido
-      </mat-error>
-    </mat-form-field>
+      <mat-checkbox formControlName="activo" color="primary">
+        Cliente activo
+      </mat-checkbox>
+    </div>
 
-    <mat-checkbox formControlName="activo">Cliente activo</mat-checkbox>
+    <mat-divider class="section-divider"></mat-divider>
+
+    <!-- Datos bancarios -->
+    <div class="form-section" formGroupName="datosBancarios">
+      <h3>Datos Bancarios</h3>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Banco</mat-label>
+        <mat-select formControlName="banco">
+          <mat-option *ngFor="let banco of bancos" [value]="banco.id">
+            {{ banco.nombre }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="clienteForm.get('datosBancarios.banco')?.hasError('required')">
+          El banco es requerido
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Tipo de Cuenta</mat-label>
+        <mat-select formControlName="tipoCuenta">
+          <mat-option *ngFor="let tipo of tiposCuenta" [value]="tipo.id">
+            {{ tipo.nombre }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="clienteForm.get('datosBancarios.tipoCuenta')?.hasError('required')">
+          El tipo de cuenta es requerido
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Número de Cuenta</mat-label>
+        <input matInput formControlName="numeroCuenta" placeholder="Ingrese el número de cuenta">
+        <mat-error *ngIf="clienteForm.get('datosBancarios.numeroCuenta')?.hasError('required')">
+          El número de cuenta es requerido
+        </mat-error>
+        <mat-error *ngIf="clienteForm.get('datosBancarios.numeroCuenta')?.hasError('pattern')">
+          El número de cuenta debe contener solo números
+        </mat-error>
+      </mat-form-field>
+    </div>
   </form>
-</mat-dialog-content>
 
-<mat-dialog-actions class="dialog-actions">
-  <button mat-button (click)="onCancel()">Cancelar</button>
-  <button mat-raised-button color="primary" 
-          [disabled]="!clienteForm.valid"
-          (click)="onSubmit()">
-    {{ data.cliente ? 'Actualizar' : 'Crear' }}
-  </button>
-</mat-dialog-actions>
+  <div dialog-actions>
+    <button mat-button (click)="onCancel()">
+      Cancelar
+    </button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!clienteForm.valid">
+      {{ data.cliente ? 'Actualizar' : 'Guardar' }}
+    </button>
+  </div>
+</app-base-dialog>

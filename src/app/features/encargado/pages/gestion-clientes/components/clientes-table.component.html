@@ -1,46 +1,72 @@
-<app-table-container 
-  [totalItems]="clientes.length" 
-  [pageSize]="pageSize"
-  (pageChange)="onPageChanged($event)">
-  <table mat-table [dataSource]="clientes">
+<div class="table-responsive">
+  <table mat-table [dataSource]="clientes" matSort (matSortChange)="onSort($event)" class="full-width">
+    <!-- Nombre -->
     <ng-container matColumnDef="nombre">
-      <th mat-header-cell *matHeaderCellDef>Nombre</th>
-      <td mat-cell *matCellDef="let cliente">{{cliente.nombre}}</td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+      <td mat-cell *matCellDef="let cliente">{{ cliente.nombre }}</td>
     </ng-container>
 
+    <!-- RUT -->
     <ng-container matColumnDef="rut">
-      <th mat-header-cell *matHeaderCellDef>RUT</th>
-      <td mat-cell *matCellDef="let cliente">{{cliente.rut}}</td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>RUT</th>
+      <td mat-cell *matCellDef="let cliente">{{ cliente.rut }}</td>
     </ng-container>
 
+    <!-- Email -->
     <ng-container matColumnDef="email">
-      <th mat-header-cell *matHeaderCellDef>Correo</th>
-      <td mat-cell *matCellDef="let cliente">{{cliente.email}}</td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Correo</th>
+      <td mat-cell *matCellDef="let cliente">{{ cliente.email }}</td>
     </ng-container>
 
+    <!-- Banco -->
+    <ng-container matColumnDef="banco">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
+      <td mat-cell *matCellDef="let cliente">{{ getNombreBanco(cliente.datosBancarios?.banco) }}</td>
+    </ng-container>
+
+    <!-- Tipo de Cuenta -->
+    <ng-container matColumnDef="tipoCuenta">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Cuenta</th>
+      <td mat-cell *matCellDef="let cliente">{{ getNombreTipoCuenta(cliente.datosBancarios?.tipoCuenta) }}</td>
+    </ng-container>
+
+    <!-- Número de Cuenta -->
+    <ng-container matColumnDef="numeroCuenta">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuenta</th>
+      <td mat-cell *matCellDef="let cliente" class="monospace">{{ cliente.datosBancarios?.numeroCuenta || 'No especificado' }}</td>
+    </ng-container>
+
+    <!-- Estado -->
     <ng-container matColumnDef="estado">
-      <th mat-header-cell *matHeaderCellDef>Estado</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
       <td mat-cell *matCellDef="let cliente">
         <app-estado-badge [activo]="cliente.activo"></app-estado-badge>
       </td>
     </ng-container>
 
+    <!-- Acciones -->
     <ng-container matColumnDef="acciones">
       <th mat-header-cell *matHeaderCellDef>Acciones</th>
       <td mat-cell *matCellDef="let cliente" class="acciones-cell">
-        <button mat-icon-button color="primary" matTooltip="Editar cliente"
-                (click)="onEdit.emit(cliente)">
+        <button mat-icon-button color="primary" 
+                (click)="onEditar(cliente)"
+                matTooltip="Editar cliente">
           <mat-icon>edit</mat-icon>
         </button>
         <button mat-icon-button [color]="cliente.activo ? 'warn' : 'primary'"
-                [matTooltip]="cliente.activo ? 'Desactivar cliente' : 'Activar cliente'"
-                (click)="onToggleEstado.emit(cliente)">
+                (click)="onEliminar(cliente)"
+                [matTooltip]="cliente.activo ? 'Desactivar cliente' : 'Activar cliente'">
           <mat-icon>{{cliente.activo ? 'person_off' : 'person'}}</mat-icon>
         </button>
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-    <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
-</app-table-container>
+  <mat-paginator 
+    [length]="clientes.length"
+    [pageSize]="pageSize"
+    (page)="onPageChange($event)">
+  </mat-paginator>
+</div>

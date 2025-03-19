@@ -1,22 +1,82 @@
 :host ::ng-deep {
-  .mat-mdc-cell.mat-column-acciones {
-    width: 100px !important;
-    padding: 0 8px !important;
-    white-space: nowrap;
+  .table-responsive {
+    overflow-x: auto;
+    margin: 0 -24px;
+    padding: 0 24px;
 
-    button {
-      margin: 0 2px !important;
-      padding: 0 !important;
-      min-width: 36px !important;
-      width: 36px !important;
-      height: 36px !important;
-      line-height: 36px !important;
+    @media screen and (max-width: 768px) {
+      margin: 0 -16px;
+      padding: 0 16px;
     }
   }
-}
 
-.mat-mdc-header-cell {
-  text-align: center;
+  .full-width {
+    width: 100%;
+    min-width: 1000px; 
+  }
+
+  table {
+    width: 100%;
+  }
+
+  .mat-mdc-row {
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 8px 16px !important;
+    
+    &.mat-column-acciones {
+      width: 100px;
+      text-align: right;
+      padding-right: 8px !important;
+      white-space: nowrap;
+    }
+
+    &.mat-column-activo {
+      width: 100px;
+      text-align: center;
+    }
+
+    &.mat-column-banco,
+    &.mat-column-tipoCuenta {
+      min-width: 150px;
+    }
+
+    &.mat-column-numeroCuenta {
+      min-width: 120px;
+      font-family: 'Roboto Mono', monospace;
+      letter-spacing: 0.5px;
+    }
+
+    &.mat-column-nombre {
+      min-width: 200px;
+    }
+
+    &.mat-column-rut {
+      min-width: 120px;
+    }
+
+    &.mat-column-email {
+      min-width: 200px;
+    }
+
+    &.mat-column-telefono {
+      min-width: 120px;
+    }
+  }
+
+  .mat-mdc-header-cell {
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  button[mat-icon-button] {
+    margin: 0 4px;
+  }
 }
 
 @media (max-width: 768px) {
