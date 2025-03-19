@@ -173,15 +173,14 @@ table {
 }
 
 .estado-chip {
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 4px 12px;
+  border-radius: 16px;
   font-size: 12px;
   font-weight: 500;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  transition: all 0.3s ease;
 
   mat-icon {
     font-size: 16px;
@@ -191,47 +190,260 @@ table {
 
   &.pendiente {
     background-color: #fff3e0;
-    color: #ff9800;
+    color: #f57c00;
+    border: 1px solid #ffb74d;
 
     &:hover {
       background-color: #ffe0b2;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
     }
   }
 
   &.completado {
     background-color: #e8f5e9;
-    color: #4caf50;
+    color: #43a047;
+    border: 1px solid #81c784;
 
     &:hover {
       background-color: #c8e6c9;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
     }
   }
 
   &.rechazado {
     background-color: #ffebee;
-    color: #f44336;
+    color: #e53935;
+    border: 1px solid #ef5350;
 
     &:hover {
       background-color: #ffcdd2;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(244, 67, 54, 0.2);
     }
   }
 }
 
-.mat-column-fecha {
-  width: 160px;
+:host {
+  display: block;
 }
 
-.mat-column-importe {
-  width: 120px;
+:host {
+  .mat-mdc-card {
+    margin-bottom: 1rem;
+  }
+
+  .mat-mdc-table {
+    width: 100%;
+    background: white;
+    
+    .mat-mdc-header-row {
+      background-color: #f5f5f5;
+    }
+
+    .mat-mdc-footer-row {
+      background-color: #fafafa;
+      font-weight: bold;
+    }
+
+    .mat-mdc-row:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    .mat-mdc-row:hover {
+      background-color: #f0f0f0;
+    }
+
+    .mat-mdc-cell, .mat-mdc-header-cell, .mat-mdc-footer-cell {
+      padding: 12px 16px;
+      
+      &.font-mono {
+        font-family: 'Roboto Mono', monospace;
+        text-align: right;
+      }
+    }
+
+    // Estilo especial para la columna de saldo
+    .saldo-header {
+      background-color: #e3f2fd;
+      font-weight: bold;
+      border-left: 2px solid #2196f3;
+    }
+
+    .saldo-cell {
+      background-color: #e3f2fd;
+      border-left: 2px solid #2196f3;
+      font-weight: 500;
+    }
+
+    tr.mat-mdc-footer-row td.saldo-cell {
+      background-color: #bbdefb;
+    }
+  }
+
+  // Mejoras en la responsividad
+  .overflow-x-auto {
+    @media (max-width: 768px) {
+      margin: 0 -1rem;
+    }
+  }
+
+  // Estilo para los botones de acción
+  .mat-mdc-icon-button {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    
+    &[disabled] {
+      opacity: 0.5;
+    }
+  }
+
+  // Estilo para los montos negativos y positivos
+  .text-red-500 {
+    color: #ef4444;
+  }
+
+  .text-green-500 {
+    color: #22c55e;
+  }
+}
+
+.mat-mdc-table {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .mat-mdc-header-cell {
+    background-color: #f5f5f5;
+    color: #424242;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 16px;
+    text-align: center;
+    
+    &.saldo-header {
+      background-color: #e3f2fd;
+      color: #1976d2;
+    }
+  }
+
+  .mat-mdc-cell {
+    padding: 12px 16px;
+    font-size: 14px;
+    text-align: center;
+
+    &.font-mono {
+      font-family: 'Roboto Mono', monospace;
+      text-align: right;
+    }
+
+    &.saldo-cell {
+      background-color: #f5f5f5;
+      font-weight: 500;
+      color: #1976d2;
+      border-left: 2px solid #1976d2;
+    }
+  }
+
+  .mat-mdc-footer-cell {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    padding: 16px;
+    border-top: 2px solid #e0e0e0;
+    text-align: center;
+
+    &.font-mono {
+      font-family: 'Roboto Mono', monospace;
+      text-align: right;
+    }
+
+    &:first-of-type {
+      text-align: left;
+    }
+  }
+
+  .text-red-500 {
+    color: #ef5350;
+  }
+
+  .text-green-500 {
+    color: #4caf50;
+  }
+}
+
+.mat-mdc-header-cell {
+  font-weight: 600;
+  color: #1a237e;
+  background-color: #f5f5f5;
+  padding: 16px;
   text-align: right;
-  padding-right: 24px;
+
+  &:first-child {
+    text-align: left;
+  }
 }
 
-.mat-column-estado {
-  width: 120px;
+.mat-mdc-cell {
+  padding: 16px;
+  text-align: right;
+  border-bottom: 1px solid #e0e0e0;
+
+  &:first-child {
+    text-align: left;
+  }
 }
 
-.mat-column-acciones {
-  width: 80px;
-  text-align: center;
+.font-mono {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 500;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.grid {
+  display: grid;
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+.p-4 {
+  padding: 1rem;
 }

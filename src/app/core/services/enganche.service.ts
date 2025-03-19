@@ -37,6 +37,7 @@ export interface Cliente {
   telefono?: string;
   rut?: string;
   activo: boolean;
+  estado: string;
   datosBancarios?: {
     banco: number;
     tipoCuenta: number;
@@ -65,6 +66,23 @@ export interface TransferenciaStats {
   pendientes: number;
   completados: number;
   rechazados: number;
+}
+
+export interface MovimientoCliente {
+  Carrera: number;
+  TipoMov: 'Transferencia' | 'Venta' | 'Pago' | 'Retiro' | 'Propina';
+  Monto: number;
+  Saldo: number;
+}
+
+export interface ResumenCarrera {
+  Carrera: number;
+  Transferencia?: number;
+  Ventas?: number;
+  Pagos?: number;
+  Retiros?: number;
+  Propinas?: number;
+  Saldo: number;
 }
 
 @Injectable({
@@ -306,6 +324,7 @@ export class EngancheService {
       email: 'juan.perez@email.com',
       telefono: '+56912345678',
       activo: true,
+      estado: 'Activo',
       datosBancarios: {
         banco: 1,
         tipoCuenta: 1,
@@ -319,6 +338,7 @@ export class EngancheService {
       email: 'maria.gonzalez@email.com',
       telefono: '+56987654321',
       activo: true,
+      estado: 'Activo',
       datosBancarios: {
         banco: 3,
         tipoCuenta: 2,
@@ -332,6 +352,7 @@ export class EngancheService {
       email: 'carlos@email.com',
       telefono: '+56934567890',
       activo: true,
+      estado: 'Activo',
       datosBancarios: {
         banco: 2,
         tipoCuenta: 1,
@@ -345,6 +366,7 @@ export class EngancheService {
       email: 'ana@email.com',
       telefono: '+56945678901',
       activo: true,
+      estado: 'Activo',
       datosBancarios: {
         banco: 4,
         tipoCuenta: 3,
@@ -358,12 +380,19 @@ export class EngancheService {
       email: 'pedro@email.com',
       telefono: '+56956789012',
       activo: true,
+      estado: 'Activo',
       datosBancarios: {
         banco: 5,
         tipoCuenta: 2,
         numeroCuenta: '321654987'
       }
     }
+  ];
+
+  private clientesMock: Cliente[] = [
+    { id: 1, nombre: 'Victor Concha', rut: '12.345.678-9', activo: true, estado: 'Activo' },
+    { id: 2, nombre: 'Juan Pérez', rut: '11.111.111-1', activo: true, estado: 'Activo' },
+    { id: 3, nombre: 'María González', rut: '22.222.222-2', activo: true, estado: 'Activo' }
   ];
 
   private operadores: Operador[] = [
@@ -536,7 +565,8 @@ export class EngancheService {
 
   // Métodos para Clientes
   getClientes(): Observable<Cliente[]> {
-    return of(this.clientes);
+    // return this.http.get<Cliente[]>(`${this.apiUrl}/clientes`);
+    return of(this.clientesMock);
   }
 
   getClientesActivos(): Observable<Cliente[]> {
@@ -612,6 +642,84 @@ export class EngancheService {
 
   getTiposCuenta(): Observable<{ id: number; nombre: string }[]> {
     return of(this.tiposCuenta);
+  }
+
+  private generarMovimientosPrueba(clienteId: number): MovimientoCliente[] {
+    const movimientos: MovimientoCliente[] = [];
+    let saldoActual = 0;
+
+    // Transferencia inicial
+    movimientos.push({
+      Carrera: 1,
+      TipoMov: 'Transferencia',
+      Monto: 1000000,
+      Saldo: 1000000
+    });
+    saldoActual = 1000000;
+
+    // Ventas en diferentes carreras
+    [1, 2, 5, 10].forEach(carrera => {
+      const venta = Math.floor(Math.random() * 100000) * -1;
+      saldoActual += venta;
+      movimientos.push({
+        Carrera: carrera,
+        TipoMov: 'Venta',
+        Monto: venta,
+        Saldo: saldoActual
+      });
+    });
+
+    // Algunos pagos
+    [2, 6, 8].forEach(carrera => {
+      const pago = Math.floor(Math.random() * 150000);
+      saldoActual += pago;
+      movimientos.push({
+        Carrera: carrera,
+        TipoMov: 'Pago',
+        Monto: pago,
+        Saldo: saldoActual
+      });
+    });
+
+    // Un retiro en la carrera 19
+    const retiro = -900000;
+    saldoActual += retiro;
+    movimientos.push({
+      Carrera: 19,
+      TipoMov: 'Retiro',
+      Monto: retiro,
+      Saldo: saldoActual
+    });
+
+    // Ordenar movimientos por carrera
+    return movimientos.sort((a, b) => a.Carrera - b.Carrera);
+  }
+
+  getMovimientosCliente(clienteId: number, fecha: string): Observable<MovimientoCliente[]> {
+    // Simulamos movimientos para el cliente
+    const movimientos = this.generarMovimientosPrueba(clienteId);
+    
+    // Filtramos solo las carreras que tienen algún movimiento
+    const movimientosFiltrados = movimientos.filter(mov => 
+      mov.TipoMov === 'Transferencia' && mov.Monto !== 0 ||
+      mov.TipoMov === 'Venta' && mov.Monto !== 0 ||
+      mov.TipoMov === 'Pago' && mov.Monto !== 0 ||
+      mov.TipoMov === 'Retiro' && mov.Monto !== 0 ||
+      mov.TipoMov === 'Propina' && mov.Monto !== 0
+    );
+
+    return of(movimientosFiltrados).pipe(delay(100));
+  }
+
+  realizarRetiro(clienteId: number, fecha: string, carrera: number, monto: number): Observable<any> {
+    // return this.http.post(`${this.apiUrl}/clientes/${clienteId}/retiros`, {
+    //   fecha,
+    //   carrera,
+    //   monto
+    // });
+    
+    // Simular un retiro exitoso
+    return of({ success: true }).pipe(delay(500));
   }
 
   // Métodos privados de utilidad
