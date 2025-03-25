@@ -1,449 +1,237 @@
 .container {
-  padding: 16px;
-}
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 
-.summary-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-bottom: 16px;
-
-  .summary-card {
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    overflow: hidden;
-    position: relative;
-    
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-    }
-
-    mat-card-content {
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-
-      .card-icon {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-
-        mat-icon {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-        }
-      }
-
-      .card-content {
-        flex: 1;
-
-        .title {
-          font-size: 12px;
-          color: rgba(0, 0, 0, 0.7);
-          margin-bottom: 3px;
-          font-weight: 500;
-        }
-
-        .value {
-          font-size: 20px;
-          font-weight: 500;
-          color: #333;
-          transition: all 0.3s ease;
-
-          &.pending {
-            color: #f57c00;
-          }
-
-          &.completed {
-            color: #2e7d32;
-          }
-
-          &.rejected {
-            color: #c62828;
-          }
-        }
-      }
-    }
-
-    // Estilos específicos para cada tipo de tarjeta
-    &.pending-card {
-      background: #fff3e0;
-      
-      .card-icon {
-        background: rgba(255, 152, 0, 0.1);
-        mat-icon {
-          color: #ff9800;
-        }
-      }
-
-      &:hover .card-icon {
-        background: rgba(255, 152, 0, 0.2);
-      }
-    }
-
-    &.completed-card {
-      background: #e8f5e9;
-      
-      .card-icon {
-        background: rgba(76, 175, 80, 0.1);
-        mat-icon {
-          color: #4caf50;
-        }
-      }
-
-      &:hover .card-icon {
-        background: rgba(76, 175, 80, 0.2);
-      }
-    }
-
-    &.rejected-card {
-      background: #ffebee;
-      
-      .card-icon {
-        background: rgba(244, 67, 54, 0.1);
-        mat-icon {
-          color: #f44336;
-        }
-      }
-
-      &:hover .card-icon {
-        background: rgba(244, 67, 54, 0.2);
-      }
+  .header {
+    margin-bottom: 24px;
+    h2 {
+      color: #1976d2;
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 500;
     }
   }
-}
 
-// Resto de los estilos sin cambios
-.filters-card, .table-card {
-  margin-bottom: 16px;
-  transition: all 0.3s ease;
-  border-radius: 10px;
-
-  &:hover {
-    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-  }
-
-  mat-card-content {
-    padding: 16px;
-  }
-}
-
-.filters-container {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  flex-wrap: wrap;
-
-  .filter-field {
-    flex: 1;
-    min-width: 200px;
-  }
-
-  .button-container {
+  .top-controls {
     display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    padding-top: 4px;
+    gap: 32px;
+    margin-bottom: 24px;
 
-    button {
-      transition: all 0.2s ease;
+    .left-section {
+      flex: 1;
+      min-width: 0;
 
-      &:hover {
-        transform: translateY(-2px);
+      .selector-cliente {
+        margin-bottom: 24px;
+        mat-form-field {
+          width: 100%;
+        }
       }
 
-      mat-icon {
-        margin-right: 4px;
+      .cliente-info {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 24px;
+
+        .info-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 24px;
+
+          .info-section {
+            h3 {
+              color: #1976d2;
+              margin: 0 0 16px 0;
+              font-size: 1.2rem;
+              font-weight: 500;
+            }
+
+            p {
+              margin: 8px 0;
+              line-height: 1.5;
+              
+              strong {
+                color: #333;
+                margin-right: 8px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .right-section {
+      width: 320px;
+      flex-shrink: 0;
+
+      .mat-calendar {
+        width: 100%;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
     }
   }
-}
 
-table {
-  width: 100%;
-}
+  .movimientos-section {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 24px;
 
-.estado-chip {
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.3s ease;
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
 
-  mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-  }
-
-  &.pendiente {
-    background-color: #fff3e0;
-    color: #f57c00;
-    border: 1px solid #ffb74d;
-
-    &:hover {
-      background-color: #ffe0b2;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
-    }
-  }
-
-  &.completado {
-    background-color: #e8f5e9;
-    color: #43a047;
-    border: 1px solid #81c784;
-
-    &:hover {
-      background-color: #c8e6c9;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
-    }
-  }
-
-  &.rechazado {
-    background-color: #ffebee;
-    color: #e53935;
-    border: 1px solid #ef5350;
-
-    &:hover {
-      background-color: #ffcdd2;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 4px rgba(244, 67, 54, 0.2);
-    }
-  }
-}
-
-:host {
-  display: block;
-}
-
-:host {
-  .mat-mdc-card {
-    margin-bottom: 1rem;
-  }
-
-  .mat-mdc-table {
-    width: 100%;
-    background: white;
-    
-    .mat-mdc-header-row {
-      background-color: #f5f5f5;
+      h3 {
+        color: #1976d2;
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
     }
 
-    .mat-mdc-footer-row {
-      background-color: #fafafa;
-      font-weight: bold;
-    }
+    .mat-table {
+      width: 100%;
+      box-shadow: none;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
 
-    .mat-mdc-row:nth-child(even) {
-      background-color: #fafafa;
-    }
+      .mat-header-cell {
+        color: #1976d2;
+        font-weight: 500;
+        background: #f5f5f5;
+        padding: 12px;
+        text-align: center;
 
-    .mat-mdc-row:hover {
-      background-color: #f0f0f0;
-    }
+        &:first-child {
+          padding-left: 24px;
+          text-align: left;
+        }
+      }
 
-    .mat-mdc-cell, .mat-mdc-header-cell, .mat-mdc-footer-cell {
-      padding: 12px 16px;
-      
-      &.font-mono {
-        font-family: 'Roboto Mono', monospace;
+      .mat-cell {
+        padding: 12px;
         text-align: right;
+        font-family: 'Roboto Mono', monospace;
+
+        &:first-child {
+          padding-left: 24px;
+          text-align: left;
+          font-family: 'Roboto', sans-serif;
+        }
+
+        &.monto-negativo {
+          color: #d32f2f;
+        }
+      }
+
+      .mat-row:hover {
+        background-color: #f5f5f5;
       }
     }
 
-    // Estilo especial para la columna de saldo
-    .saldo-header {
-      background-color: #e3f2fd;
-      font-weight: bold;
-      border-left: 2px solid #2196f3;
-    }
-
-    .saldo-cell {
-      background-color: #e3f2fd;
-      border-left: 2px solid #2196f3;
-      font-weight: 500;
-    }
-
-    tr.mat-mdc-footer-row td.saldo-cell {
-      background-color: #bbdefb;
+    .no-movimientos {
+      text-align: center;
+      padding: 32px;
+      color: #666;
+      font-style: italic;
     }
   }
 
-  // Mejoras en la responsividad
-  .overflow-x-auto {
-    @media (max-width: 768px) {
-      margin: 0 -1rem;
-    }
-  }
-
-  // Estilo para los botones de acción
-  .mat-mdc-icon-button {
-    width: 36px;
-    height: 36px;
-    line-height: 36px;
-    
-    &[disabled] {
-      opacity: 0.5;
-    }
-  }
-
-  // Estilo para los montos negativos y positivos
-  .text-red-500 {
-    color: #ef4444;
-  }
-
-  .text-green-500 {
-    color: #22c55e;
+  .no-data {
+    text-align: center;
+    padding: 32px;
+    color: #666;
+    font-style: italic;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
 }
 
-.mat-mdc-table {
-  width: 100%;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  .mat-mdc-header-cell {
-    background-color: #f5f5f5;
-    color: #424242;
-    font-weight: 600;
-    font-size: 14px;
-    padding: 16px;
-    text-align: center;
-    
-    &.saldo-header {
-      background-color: #e3f2fd;
-      color: #1976d2;
-    }
+:host ::ng-deep {
+  .fecha-reunion {
+    background-color: #bbdefb !important;
+    border-radius: 4px;
   }
 
-  .mat-mdc-cell {
-    padding: 12px 16px;
-    font-size: 14px;
-    text-align: center;
-
-    &.font-mono {
-      font-family: 'Roboto Mono', monospace;
-      text-align: right;
-    }
-
-    &.saldo-cell {
-      background-color: #f5f5f5;
-      font-weight: 500;
-      color: #1976d2;
-      border-left: 2px solid #1976d2;
-    }
+  .mat-calendar-body-selected {
+    background-color: #1976d2;
+    color: #fff;
   }
 
-  .mat-mdc-footer-cell {
-    background-color: #f5f5f5;
-    font-weight: 600;
-    padding: 16px;
-    border-top: 2px solid #e0e0e0;
-    text-align: center;
-
-    &.font-mono {
-      font-family: 'Roboto Mono', monospace;
-      text-align: right;
+  // Estilos para los montos en la tabla
+  .mat-cell {
+    &.monto-negativo {
+      color: #d32f2f;
     }
-
-    &:first-of-type {
-      text-align: left;
-    }
-  }
-
-  .text-red-500 {
-    color: #ef5350;
-  }
-
-  .text-green-500 {
-    color: #4caf50;
   }
 }
 
-.mat-mdc-header-cell {
-  font-weight: 600;
-  color: #1a237e;
-  background-color: #f5f5f5;
-  padding: 16px;
-  text-align: right;
-
-  &:first-child {
-    text-align: left;
-  }
-}
-
+// Estilos para los montos en la tabla
 .mat-mdc-cell {
-  padding: 16px;
-  text-align: right;
-  border-bottom: 1px solid #e0e0e0;
-
-  &:first-child {
-    text-align: left;
+  &.monto-negativo {
+    color: #d32f2f;
+    font-family: 'Roboto Mono', monospace;
+    text-align: right;
   }
 }
 
-.font-mono {
-  font-family: 'Roboto Mono', monospace;
-  font-weight: 500;
-}
-
-.flex {
-  display: flex;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.gap-2 {
-  gap: 0.5rem;
-}
-
-.grid {
-  display: grid;
-}
-
-.grid-cols-1 {
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-}
-
-@media (min-width: 768px) {
-  .md\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+// Estilos para los montos en la tabla
+.mat-mdc-footer-cell {
+  &.monto-negativo {
+    color: #d32f2f;
+    font-family: 'Roboto Mono', monospace;
+    text-align: right;
   }
 }
 
-.gap-4 {
-  gap: 1rem;
+// Estilos para los montos en la tabla
+.mat-mdc-header-cell {
+  &.monto-negativo {
+    color: #d32f2f;
+    font-family: 'Roboto Mono', monospace;
+    text-align: right;
+  }
 }
 
-.mb-4 {
-  margin-bottom: 1rem;
+// Estilos para los montos en la tabla
+.mat-cell {
+  &.monto-positivo {
+    color: #059669;
+    font-family: 'Roboto Mono', monospace;
+    text-align: right;
+  }
 }
 
-.w-full {
-  width: 100%;
+// Estilos para los montos en la tabla
+.mat-mdc-cell {
+  &.monto-positivo {
+    color: #059669;
+    font-family: 'Roboto Mono', monospace;
+    text-align: right;
+  }
 }
 
-.overflow-x-auto {
-  overflow-x: auto;
+// Estilos para los montos en la tabla
+.mat-mdc-footer-cell {
+  &.monto-positivo {
+    color: #059669;
+    font-family: 'Roboto Mono', monospace;
+    text-align: right;
+  }
 }
 
-.p-4 {
-  padding: 1rem;
+// Estilos para los montos en la tabla
+.mat-mdc-header-cell {
+  &.monto-positivo {
+    color: #059669;
+    font-family: 'Roboto Mono', monospace;
+    text-align: right;
+  }
 }

@@ -1,25 +1,27 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { EngancheService } from '../../../../core/services/enganche.service';
-import { Cliente } from '../../../../core/interfaces/cliente.interface';
-import { MovimientoCliente } from '../../../../core/interfaces/movimiento-cliente.interface';
-import { ResumenCarrera } from '../../../../core/interfaces/resumen-carrera.interface';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
 import { RetiroDialogComponent } from './retiro-dialog/retiro-dialog.component';
-import { ClpPipe } from '../../../../shared/pipes/clp.pipe';
+import { EngancheService, Cliente, MovimientoCliente } from '@core/services/enganche.service';
+import { firstValueFrom } from 'rxjs';
+import { ClpPipe } from '@shared/pipes/clp.pipe';
+
+interface MovimientoAgrupado {
+  carrera: number;
+  transferencia: number;
+  venta: number;
+  pago: number;
+  retiro: number;
+  propina: number;
+  saldo: number;
+}
 
 @Component({
   selector: 'app-clientes',
@@ -28,252 +30,138 @@ import { ClpPipe } from '../../../../shared/pipes/clp.pipe';
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatDatepickerModule,
-    MatFormFieldModule,
     MatSelectModule,
-    MatTableModule,
+    MatDatepickerModule,
     MatNativeDateModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatChipsModule,
-    MatIconModule,
-    MatInputModule,
-    MatTooltipModule,
+    MatTableModule,
+    MatButtonModule,
     MatDialogModule,
-    MatSnackBarModule,
+    MatFormFieldModule,
+    FormsModule,
     ClpPipe
-  ],
-  styles: [`
-    .estado-chip {
-      padding: 4px 12px;
-      border-radius: 16px;
-      font-size: 12px;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: all 0.3s ease;
-
-      mat-icon {
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
-      }
-
-      &.pendiente {
-        background-color: #fff3e0;
-        color: #f57c00;
-        border: 1px solid #ffb74d;
-
-        &:hover {
-          background-color: #ffe0b2;
-          transform: translateY(-1px);
-          box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
-        }
-      }
-
-      &.completado {
-        background-color: #e8f5e9;
-        color: #43a047;
-        border: 1px solid #81c784;
-
-        &:hover {
-          background-color: #c8e6c9;
-          transform: translateY(-1px);
-          box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
-        }
-      }
-
-      &.rechazado {
-        background-color: #ffebee;
-        color: #e53935;
-        border: 1px solid #ef5350;
-
-        &:hover {
-          background-color: #ffcdd2;
-          transform: translateY(-1px);
-          box-shadow: 0 2px 4px rgba(244, 67, 54, 0.2);
-        }
-      }
-    }
-
-    .acciones-cell {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-
-      button {
-        min-width: unset;
-        padding: 4px;
-        line-height: 1;
-
-        mat-icon {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-        }
-      }
-    }
-  `]
+  ]
 })
 export class ClientesComponent implements OnInit {
   clientes: Cliente[] = [];
   clienteSeleccionado: Cliente | null = null;
-  fechaSeleccionada = new Date();
-  movimientos: MovimientoCliente[] = [];
-  resumenCarreras: ResumenCarrera[] = [];
-  totales: ResumenCarrera = {
-    Carrera: 0,
-    Transferencia: 0,
-    Ventas: 0,
-    Pagos: 0,
-    Retiros: 0,
-    Propinas: 0,
-    Saldo: 0
-  };
-  displayedColumns = ['carrera', 'transfer', 'ventas', 'pagos', 'retiros', 'propinas', 'saldo'];
-  maxCarreras = 25;
+  fechaSeleccionada: Date = new Date(2025, 2, 8); // 8 de marzo de 2025
+  fechasReunion: Date[] = [
+    new Date(2025, 2, 8), // 8 de marzo 2025
+    new Date(2025, 2, 15) // 15 de marzo 2025
+  ];
+  movimientosAgrupados: MovimientoAgrupado[] = [];
+  displayedColumns: string[] = ['carrera', 'transferencia', 'venta', 'pago', 'retiro', 'propina', 'saldo'];
 
   constructor(
     private engancheService: EngancheService,
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private dialog: MatDialog
   ) {}
 
-  ngOnInit() {
-    this.cargarClientes();
-  }
-
-  cargarClientes() {
-    this.engancheService.getClientes().subscribe(clientes => {
-      this.clientes = clientes;
-    });
-  }
-
-  onClienteChange() {
+  async ngOnInit() {
+    this.clientes = await firstValueFrom(this.engancheService.getClientes());
     if (this.clienteSeleccionado) {
-      this.cargarMovimientos();
+      await this.cargarMovimientos();
     }
   }
 
-  onFechaChange() {
-    if (this.clienteSeleccionado) {
-      this.cargarMovimientos();
+  async seleccionarCliente(cliente: Cliente) {
+    this.clienteSeleccionado = cliente;
+    if (this.fechaSeleccionada) {
+      await this.cargarMovimientos();
     }
   }
 
-  cargarMovimientos() {
-    if (!this.clienteSeleccionado) return;
-    
-    const fecha = this.fechaSeleccionada.toISOString().split('T')[0];
-    this.engancheService.getMovimientosCliente(this.clienteSeleccionado.id, fecha).subscribe({
-      next: (movimientos) => {
-        this.movimientos = movimientos;
-        this.generarResumenCarreras();
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.snackBar.open('Error al cargar los movimientos', 'Cerrar', { duration: 3000 });
+  async onFechaChange(fecha: Date | null) {
+    if (fecha) {
+      this.fechaSeleccionada = fecha;
+      if (this.clienteSeleccionado) {
+        await this.cargarMovimientos();
       }
-    });
+    }
   }
 
-  generarResumenCarreras() {
-    this.resumenCarreras = [];
-    this.totales = {
-      Carrera: 0,
-      Transferencia: 0,
-      Ventas: 0,
-      Pagos: 0,
-      Retiros: 0,
-      Propinas: 0,
-      Saldo: 0
-    };
+  fechaReunionClass = (fecha: Date): string => {
+    return this.esFechaReunion(fecha) ? 'fecha-reunion' : '';
+  };
 
-    // Agrupar movimientos por carrera
-    const movimientosPorCarrera = new Map<number, MovimientoCliente[]>();
-    this.movimientos.forEach(mov => {
-      if (!movimientosPorCarrera.has(mov.Carrera)) {
-        movimientosPorCarrera.set(mov.Carrera, []);
-      }
-      movimientosPorCarrera.get(mov.Carrera)?.push(mov);
-    });
+  esFechaReunion = (fecha: Date): boolean => {
+    return this.fechasReunion.some(f => 
+      f.getFullYear() === fecha.getFullYear() &&
+      f.getMonth() === fecha.getMonth() &&
+      f.getDate() === fecha.getDate()
+    );
+  };
 
-    // Procesar solo las carreras con movimientos
-    movimientosPorCarrera.forEach((movimientosCarrera, carrera) => {
-      const resumen: ResumenCarrera = {
-        Carrera: carrera,
-        Saldo: 0
-      };
+  async cargarMovimientos() {
+    if (!this.clienteSeleccionado || !this.fechaSeleccionada) return;
 
-      movimientosCarrera.forEach(mov => {
-        switch (mov.TipoMov) {
-          case 'Transferencia':
-            resumen.Transferencia = mov.Monto;
-            this.totales.Transferencia = (this.totales.Transferencia || 0) + mov.Monto;
-            break;
-          case 'Venta':
-            resumen.Ventas = (resumen.Ventas || 0) + mov.Monto;
-            this.totales.Ventas = (this.totales.Ventas || 0) + mov.Monto;
-            break;
-          case 'Pago':
-            resumen.Pagos = (resumen.Pagos || 0) + mov.Monto;
-            this.totales.Pagos = (this.totales.Pagos || 0) + mov.Monto;
-            break;
-          case 'Retiro':
-            resumen.Retiros = (resumen.Retiros || 0) + mov.Monto;
-            this.totales.Retiros = (this.totales.Retiros || 0) + mov.Monto;
-            break;
-          case 'Propina':
-            resumen.Propinas = (resumen.Propinas || 0) + mov.Monto;
-            this.totales.Propinas = (this.totales.Propinas || 0) + mov.Monto;
-            break;
-        }
-      });
+    const movimientos = await firstValueFrom(
+      this.engancheService.getMovimientosCliente(this.clienteSeleccionado.id, this.fechaSeleccionada)
+    );
 
-      resumen.Saldo = movimientosCarrera[movimientosCarrera.length - 1].Saldo;
-      this.totales.Saldo = resumen.Saldo; // El saldo total es el último saldo
-      this.resumenCarreras.push(resumen);
-    });
-
-    // Ordenar por número de carrera
-    this.resumenCarreras.sort((a, b) => a.Carrera - b.Carrera);
+    this.movimientosAgrupados = this.agruparMovimientosPorCarrera(movimientos);
   }
 
-  realizarRetiro(carrera: number) {
-    if (!this.clienteSeleccionado) return;
+  agruparMovimientosPorCarrera(movimientos: MovimientoCliente[]): MovimientoAgrupado[] {
+    const grupos = new Map<number, MovimientoAgrupado>();
 
-    const resumenCarrera = this.resumenCarreras.find(r => r.Carrera === carrera);
-    if (!resumenCarrera || resumenCarrera.Saldo <= 0) return;
+    movimientos.forEach(mov => {
+      if (!grupos.has(mov.Carrera)) {
+        grupos.set(mov.Carrera, {
+          carrera: mov.Carrera,
+          transferencia: 0,
+          venta: 0,
+          pago: 0,
+          retiro: 0,
+          propina: 0,
+          saldo: 0
+        });
+      }
+
+      const grupo = grupos.get(mov.Carrera)!;
+      switch (mov.TipoMov.toLowerCase()) {
+        case 'transferencia':
+          grupo.transferencia = mov.Monto;
+          break;
+        case 'venta':
+          grupo.venta = mov.Monto;
+          break;
+        case 'pago':
+          grupo.pago = mov.Monto;
+          break;
+        case 'retiro':
+          grupo.retiro = mov.Monto;
+          break;
+        case 'propina':
+          grupo.propina = mov.Monto;
+          break;
+      }
+      grupo.saldo = mov.Saldo;
+    });
+
+    return Array.from(grupos.values());
+  }
+
+  calcularSaldoDisponible(): number {
+    if (!this.movimientosAgrupados.length) return 0;
+    return this.movimientosAgrupados[this.movimientosAgrupados.length - 1].saldo;
+  }
+
+  async abrirDialogoRetiro() {
+    if (!this.clienteSeleccionado) return;
 
     const dialogRef = this.dialog.open(RetiroDialogComponent, {
       width: '400px',
       data: {
-        saldoDisponible: resumenCarrera.Saldo
+        clienteId: this.clienteSeleccionado.id,
+        saldoDisponible: this.calcularSaldoDisponible(),
+        fecha: this.fechaSeleccionada
       }
     });
 
-    dialogRef.afterClosed().subscribe((monto: number | undefined) => {
-      if (monto && this.clienteSeleccionado) {
-        const fecha = this.fechaSeleccionada.toISOString().split('T')[0];
-        this.engancheService.realizarRetiro(
-          this.clienteSeleccionado.id,
-          fecha,
-          carrera,
-          monto
-        ).subscribe({
-          next: () => {
-            this.snackBar.open('Retiro realizado con éxito', 'Cerrar', { duration: 3000 });
-            this.cargarMovimientos();
-          },
-          error: () => {
-            this.snackBar.open('Error al realizar el retiro', 'Cerrar', { duration: 3000 });
-          }
-        });
-      }
-    });
+    const result = await dialogRef.afterClosed().toPromise();
+    if (result) {
+      await this.cargarMovimientos();
+    }
   }
 }

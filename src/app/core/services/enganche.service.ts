@@ -33,16 +33,19 @@ export interface DashboardEncargadoStats {
 export interface Cliente {
   id: number;
   nombre: string;
-  email?: string;
+  rut: string;
   telefono?: string;
-  rut?: string;
-  activo: boolean;
-  estado: string;
+  email?: string;
   datosBancarios?: {
-    banco: number;
-    tipoCuenta: number;
+    banco: string;
+    tipoCuenta: string;
     numeroCuenta: string;
   };
+  activo: boolean;
+  estado: string;
+  banco?: string;
+  tipoCuenta?: string;
+  numeroCuenta?: string;
 }
 
 export interface Operador {
@@ -69,6 +72,7 @@ export interface TransferenciaStats {
 }
 
 export interface MovimientoCliente {
+  Fecha: string;
   Carrera: number;
   TipoMov: 'Transferencia' | 'Venta' | 'Pago' | 'Retiro' | 'Propina';
   Monto: number;
@@ -83,6 +87,11 @@ export interface ResumenCarrera {
   Retiros?: number;
   Propinas?: number;
   Saldo: number;
+}
+
+export interface FechaReunion {
+  fecha: Date;
+  activa: boolean;
 }
 
 @Injectable({
@@ -297,20 +306,20 @@ export class EngancheService {
     }
   ];
 
-  private bancos: { id: number; nombre: string }[] = [
+  private bancos = [
     { id: 1, nombre: 'Banco de Chile' },
-    { id: 2, nombre: 'Banco Santander' },
-    { id: 3, nombre: 'Banco Estado' },
+    { id: 2, nombre: 'Banco Estado' },
+    { id: 3, nombre: 'Banco Santander' },
     { id: 4, nombre: 'Banco BCI' },
-    { id: 5, nombre: 'Banco Scotiabank' },
-    { id: 6, nombre: 'Banco Itaú' },
-    { id: 7, nombre: 'Banco Security' },
-    { id: 8, nombre: 'Banco Falabella' },
-    { id: 9, nombre: 'Banco Ripley' },
-    { id: 10, nombre: 'Banco BICE' }
+    { id: 5, nombre: 'Banco Itaú' },
+    { id: 6, nombre: 'Banco Security' },
+    { id: 7, nombre: 'Banco Falabella' },
+    { id: 8, nombre: 'Banco Ripley' },
+    { id: 9, nombre: 'Banco Scotiabank' },
+    { id: 10, nombre: 'Banco Internacional' }
   ];
 
-  private tiposCuenta: { id: number; nombre: string }[] = [
+  private tiposCuenta = [
     { id: 1, nombre: 'Cuenta Corriente' },
     { id: 2, nombre: 'Cuenta Vista' },
     { id: 3, nombre: 'Cuenta de Ahorro' }
@@ -321,71 +330,52 @@ export class EngancheService {
       id: 1,
       nombre: 'Juan Pérez',
       rut: '12.345.678-9',
-      email: 'juan.perez@email.com',
       telefono: '+56912345678',
+      email: 'juan.perez@email.com',
+      datosBancarios: {
+        banco: 'Banco Estado',
+        tipoCuenta: 'Cuenta Vista',
+        numeroCuenta: '123456789'
+      },
       activo: true,
       estado: 'Activo',
-      datosBancarios: {
-        banco: 1,
-        tipoCuenta: 1,
-        numeroCuenta: '00123456789'
-      }
+      banco: 'Banco Estado',
+      tipoCuenta: 'Cuenta Vista',
+      numeroCuenta: '123456789'
     },
     {
       id: 2,
       nombre: 'María González',
-      rut: '11.111.111-1',
-      email: 'maria.gonzalez@email.com',
+      rut: '98.765.432-1',
       telefono: '+56987654321',
+      email: 'maria.gonzalez@email.com',
+      datosBancarios: {
+        banco: 'Banco Santander',
+        tipoCuenta: 'Cuenta Corriente',
+        numeroCuenta: '987654321'
+      },
       activo: true,
       estado: 'Activo',
-      datosBancarios: {
-        banco: 3,
-        tipoCuenta: 2,
-        numeroCuenta: '987654321'
-      }
+      banco: 'Banco Santander',
+      tipoCuenta: 'Cuenta Corriente',
+      numeroCuenta: '987654321'
     },
     {
       id: 3,
       nombre: 'Carlos Rodríguez',
-      rut: '11.222.333-4',
-      email: 'carlos@email.com',
-      telefono: '+56934567890',
+      rut: '23.456.789-0',
+      telefono: '+56923456789',
+      email: 'carlos.rodriguez@email.com',
+      datosBancarios: {
+        banco: 'Banco BCI',
+        tipoCuenta: 'Cuenta de Ahorro',
+        numeroCuenta: '234567890'
+      },
       activo: true,
       estado: 'Activo',
-      datosBancarios: {
-        banco: 2,
-        tipoCuenta: 1,
-        numeroCuenta: '456789123'
-      }
-    },
-    {
-      id: 4,
-      nombre: 'Ana Silva',
-      rut: '44.555.666-7',
-      email: 'ana@email.com',
-      telefono: '+56945678901',
-      activo: true,
-      estado: 'Activo',
-      datosBancarios: {
-        banco: 4,
-        tipoCuenta: 3,
-        numeroCuenta: '789123456'
-      }
-    },
-    {
-      id: 5,
-      nombre: 'Pedro Martínez',
-      rut: '77.888.999-0',
-      email: 'pedro@email.com',
-      telefono: '+56956789012',
-      activo: true,
-      estado: 'Activo',
-      datosBancarios: {
-        banco: 5,
-        tipoCuenta: 2,
-        numeroCuenta: '321654987'
-      }
+      banco: 'Banco BCI',
+      tipoCuenta: 'Cuenta de Ahorro',
+      numeroCuenta: '234567890'
     }
   ];
 
@@ -460,6 +450,56 @@ export class EngancheService {
     transferenciasPendientes: 4,
     totalTransferido: 25000
   };
+
+  private fechasReuniones: FechaReunion[] = [
+    { fecha: new Date(2025, 2, 8), activa: true }, // 8 de marzo 2025
+    { fecha: new Date(2025, 2, 15), activa: true } // 15 de marzo 2025
+  ];
+
+  private movimientosPrueba: MovimientoCliente[] = [
+    {
+      Fecha: '2025-03-08',
+      Carrera: 1,
+      TipoMov: 'Transferencia',
+      Monto: 50000,
+      Saldo: 50000
+    },
+    {
+      Fecha: '2025-03-08',
+      Carrera: 1,
+      TipoMov: 'Venta',
+      Monto: 30000,
+      Saldo: 80000
+    },
+    {
+      Fecha: '2025-03-08',
+      Carrera: 2,
+      TipoMov: 'Transferencia',
+      Monto: 40000,
+      Saldo: 120000
+    },
+    {
+      Fecha: '2025-03-08',
+      Carrera: 2,
+      TipoMov: 'Retiro',
+      Monto: -20000,
+      Saldo: 100000
+    },
+    {
+      Fecha: '2025-03-15',
+      Carrera: 1,
+      TipoMov: 'Transferencia',
+      Monto: 60000,
+      Saldo: 60000
+    },
+    {
+      Fecha: '2025-03-15',
+      Carrera: 1,
+      TipoMov: 'Venta',
+      Monto: 40000,
+      Saldo: 100000
+    }
+  ];
 
   constructor(private http: HttpClient) { }
 
@@ -565,8 +605,7 @@ export class EngancheService {
 
   // Métodos para Clientes
   getClientes(): Observable<Cliente[]> {
-    // return this.http.get<Cliente[]>(`${this.apiUrl}/clientes`);
-    return of(this.clientesMock);
+    return of(this.clientes).pipe(delay(100));
   }
 
   getClientesActivos(): Observable<Cliente[]> {
@@ -636,90 +675,134 @@ export class EngancheService {
     };
   }
 
-  getBancos(): Observable<{ id: number; nombre: string }[]> {
-    return of(this.bancos);
+  getBancos(): Observable<{id: number, nombre: string}[]> {
+    return of(this.bancos).pipe(delay(100));
   }
 
-  getTiposCuenta(): Observable<{ id: number; nombre: string }[]> {
-    return of(this.tiposCuenta);
+  getTiposCuenta(): Observable<{id: number, nombre: string}[]> {
+    return of(this.tiposCuenta).pipe(delay(100));
   }
 
-  private generarMovimientosPrueba(clienteId: number): MovimientoCliente[] {
-    const movimientos: MovimientoCliente[] = [];
-    let saldoActual = 0;
-
-    // Transferencia inicial
-    movimientos.push({
-      Carrera: 1,
-      TipoMov: 'Transferencia',
-      Monto: 1000000,
-      Saldo: 1000000
-    });
-    saldoActual = 1000000;
-
-    // Ventas en diferentes carreras
-    [1, 2, 5, 10].forEach(carrera => {
-      const venta = Math.floor(Math.random() * 100000) * -1;
-      saldoActual += venta;
-      movimientos.push({
-        Carrera: carrera,
-        TipoMov: 'Venta',
-        Monto: venta,
-        Saldo: saldoActual
-      });
-    });
-
-    // Algunos pagos
-    [2, 6, 8].forEach(carrera => {
-      const pago = Math.floor(Math.random() * 150000);
-      saldoActual += pago;
-      movimientos.push({
-        Carrera: carrera,
-        TipoMov: 'Pago',
-        Monto: pago,
-        Saldo: saldoActual
-      });
-    });
-
-    // Un retiro en la carrera 19
-    const retiro = -900000;
-    saldoActual += retiro;
-    movimientos.push({
-      Carrera: 19,
-      TipoMov: 'Retiro',
-      Monto: retiro,
-      Saldo: saldoActual
-    });
-
-    // Ordenar movimientos por carrera
-    return movimientos.sort((a, b) => a.Carrera - b.Carrera);
-  }
-
-  getMovimientosCliente(clienteId: number, fecha: string): Observable<MovimientoCliente[]> {
-    // Simulamos movimientos para el cliente
-    const movimientos = this.generarMovimientosPrueba(clienteId);
-    
-    // Filtramos solo las carreras que tienen algún movimiento
-    const movimientosFiltrados = movimientos.filter(mov => 
-      mov.TipoMov === 'Transferencia' && mov.Monto !== 0 ||
-      mov.TipoMov === 'Venta' && mov.Monto !== 0 ||
-      mov.TipoMov === 'Pago' && mov.Monto !== 0 ||
-      mov.TipoMov === 'Retiro' && mov.Monto !== 0 ||
-      mov.TipoMov === 'Propina' && mov.Monto !== 0
-    );
-
-    return of(movimientosFiltrados).pipe(delay(100));
-  }
-
-  realizarRetiro(clienteId: number, fecha: string, carrera: number, monto: number): Observable<any> {
-    // return this.http.post(`${this.apiUrl}/clientes/${clienteId}/retiros`, {
-    //   fecha,
-    //   carrera,
-    //   monto
-    // });
-    
-    // Simular un retiro exitoso
+  actualizarDatosBancarios(clienteId: number, datos: { banco: string; tipoCuenta: string; numeroCuenta: string }): Observable<any> {
+    // Simulamos la actualización de datos bancarios
+    const cliente = this.clientes.find(c => c.id === clienteId);
+    if (cliente) {
+      cliente.datosBancarios = datos;
+    }
     return of({ success: true }).pipe(delay(500));
+  }
+
+  realizarRetiro(clienteId: number, fecha: string, monto: number): Observable<any> {
+    // Simulamos la realización del retiro
+    const cliente = this.clientes.find(c => c.id === clienteId);
+    if (!cliente) {
+      return throwError(() => new Error('Cliente no encontrado'));
+    }
+
+    const movimiento: MovimientoCliente = {
+      Fecha: fecha,
+      Carrera: 1, // Por defecto carrera 1 para retiros
+      TipoMov: 'Retiro',
+      Monto: monto, // El monto ya viene negativo desde el componente
+      Saldo: 0 // Se calculará en el backend real
+    };
+
+    return of({ success: true, movimiento }).pipe(delay(500));
+  }
+
+  obtenerClientes(): Observable<Cliente[]> {
+    return of(this.clientes).pipe(delay(100));
+  }
+
+  obtenerFechasReuniones(): Observable<FechaReunion[]> {
+    return of(this.fechasReuniones).pipe(delay(100));
+  }
+
+  obtenerMovimientosPrueba(clienteId: number, fecha: Date): Observable<MovimientoCliente[]> {
+    const movimientos: MovimientoCliente[] = [];
+    const fechaFormateada = new Date(fecha);
+    fechaFormateada.setHours(0, 0, 0, 0);
+
+    // Generamos movimientos solo si la fecha corresponde a una reunión activa
+    const esReunionActiva = this.fechasReuniones.some(r => {
+      const fechaReunion = new Date(r.fecha);
+      fechaReunion.setHours(0, 0, 0, 0);
+      return fechaReunion.getTime() === fechaFormateada.getTime() && r.activa;
+    });
+
+    if (!esReunionActiva) {
+      return of([]);
+    }
+
+    // Generamos movimientos aleatorios para la fecha
+    let saldoActual = 0;
+    for (let carrera = 1; carrera <= 3; carrera++) {
+      // Transferencia
+      const montoTransferencia = Math.floor(Math.random() * 50000) + 10000;
+      saldoActual += montoTransferencia;
+      movimientos.push({
+        Fecha: fechaFormateada.toISOString(),
+        Carrera: carrera,
+        TipoMov: 'Transferencia',
+        Monto: montoTransferencia,
+        Saldo: saldoActual
+      });
+
+      // Venta
+      if (Math.random() > 0.3) {
+        const montoVenta = Math.floor(Math.random() * 30000) + 5000;
+        saldoActual += montoVenta;
+        movimientos.push({
+          Fecha: fechaFormateada.toISOString(),
+          Carrera: carrera,
+          TipoMov: 'Venta',
+          Monto: montoVenta,
+          Saldo: saldoActual
+        });
+      }
+
+      // Pago
+      if (Math.random() > 0.5) {
+        const montoPago = Math.floor(Math.random() * 100000) + 20000;
+        saldoActual += montoPago;
+        movimientos.push({
+          Fecha: fechaFormateada.toISOString(),
+          Carrera: carrera,
+          TipoMov: 'Pago',
+          Monto: montoPago,
+          Saldo: saldoActual
+        });
+      }
+
+      // Propina
+      if (Math.random() > 0.7) {
+        const montoPropina = Math.floor(Math.random() * 5000) + 1000;
+        saldoActual += montoPropina;
+        movimientos.push({
+          Fecha: fechaFormateada.toISOString(),
+          Carrera: carrera,
+          TipoMov: 'Propina',
+          Monto: montoPropina,
+          Saldo: saldoActual
+        });
+      }
+    }
+
+    return of(movimientos).pipe(delay(100));
+  }
+
+  getMovimientosCliente(clienteId: number, fecha: Date): Observable<MovimientoCliente[]> {
+    // Simulamos obtener los movimientos del cliente
+    const movimientos = this.movimientosPrueba;
+    const fechaSeleccionada = new Date(fecha);
+    
+    // Filtramos por la fecha seleccionada
+    return of(movimientos.filter(m => {
+      const movFecha = new Date(m.Fecha);
+      return movFecha.getFullYear() === fechaSeleccionada.getFullYear() &&
+             movFecha.getMonth() === fechaSeleccionada.getMonth() &&
+             movFecha.getDate() === fechaSeleccionada.getDate();
+    })).pipe(delay(100));
   }
 
   // Métodos privados de utilidad
@@ -732,5 +815,83 @@ export class EngancheService {
         .filter(t => t.estado === 'Completado')
         .reduce((sum, t) => Number(t.importe) || 0, 0)
     };
+  }
+
+  private generarMovimientosPrueba(): MovimientoCliente[] {
+    const movimientos: MovimientoCliente[] = [];
+    const fechas = [
+      new Date('2025-03-19'),
+      new Date('2025-03-18'),
+      new Date('2025-03-17')
+    ];
+
+    fechas.forEach(fecha => {
+      let saldoAcumulado = 0;
+      // Generamos 5 carreras por día
+      for (let carrera = 1; carrera <= 5; carrera++) {
+        // Transferencia inicial (depósito)
+        const montoTransferencia = Math.floor(Math.random() * 50000) + 50000;
+        saldoAcumulado += montoTransferencia;
+        movimientos.push({
+          Fecha: fecha.toISOString(),
+          Carrera: carrera,
+          TipoMov: 'Transferencia',
+          Monto: montoTransferencia,
+          Saldo: saldoAcumulado
+        });
+
+        // Venta (apuesta)
+        const montoVenta = -(Math.floor(Math.random() * 20000) + 10000);
+        saldoAcumulado += montoVenta;
+        movimientos.push({
+          Fecha: fecha.toISOString(),
+          Carrera: carrera,
+          TipoMov: 'Venta',
+          Monto: montoVenta,
+          Saldo: saldoAcumulado
+        });
+
+        // 50% de probabilidad de ganar
+        if (Math.random() > 0.5) {
+          const montoPago = Math.floor(Math.random() * 40000) + 20000;
+          saldoAcumulado += montoPago;
+          movimientos.push({
+            Fecha: fecha.toISOString(),
+            Carrera: carrera,
+            TipoMov: 'Pago',
+            Monto: montoPago,
+            Saldo: saldoAcumulado
+          });
+
+          // Si gana, puede dar propina
+          if (Math.random() > 0.7) {
+            const montoPropina = -(Math.floor(Math.random() * 5000) + 1000);
+            saldoAcumulado += montoPropina;
+            movimientos.push({
+              Fecha: fecha.toISOString(),
+              Carrera: carrera,
+              TipoMov: 'Propina',
+              Monto: montoPropina,
+              Saldo: saldoAcumulado
+            });
+          }
+        }
+
+        // 30% de probabilidad de hacer un retiro después de cada carrera
+        if (Math.random() > 0.7 && saldoAcumulado > 20000) {
+          const montoRetiro = -(Math.floor(Math.random() * 20000) + 10000);
+          saldoAcumulado += montoRetiro;
+          movimientos.push({
+            Fecha: fecha.toISOString(),
+            Carrera: carrera,
+            TipoMov: 'Retiro',
+            Monto: montoRetiro,
+            Saldo: saldoAcumulado
+          });
+        }
+      }
+    });
+
+    return movimientos;
   }
 }

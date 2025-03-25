@@ -1,112 +1,123 @@
-<div class="p-4">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Movimientos por Cliente</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <mat-form-field appearance="outline">
-          <mat-label>Cliente</mat-label>
-          <mat-select [(ngModel)]="clienteSeleccionado" (selectionChange)="onClienteChange()">
-            <mat-option [value]="null">Seleccione un cliente</mat-option>
+<div class="container">
+  <div class="header">
+    <h2>Gestión de Clientes</h2>
+  </div>
+
+  <div class="top-controls">
+    <div class="left-section">
+      <div class="selector-cliente">
+        <mat-form-field appearance="fill">
+          <mat-label>Seleccionar Cliente</mat-label>
+          <mat-select (selectionChange)="seleccionarCliente($event.value)">
             <mat-option *ngFor="let cliente of clientes" [value]="cliente">
-              {{ cliente.nombre }}
+              {{ cliente.nombre }} - {{ cliente.rut }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Fecha</mat-label>
-          <input matInput [matDatepicker]="picker" [(ngModel)]="fechaSeleccionada" (dateChange)="onFechaChange()">
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
       </div>
 
-      <div class="overflow-x-auto mat-elevation-z2">
-        <table mat-table [dataSource]="resumenCarreras" class="w-full">
-          <!-- Carrera Column -->
-          <ng-container matColumnDef="carrera">
-            <th mat-header-cell *matHeaderCellDef>Carrera</th>
-            <td mat-cell *matCellDef="let row">{{ row.Carrera }}</td>
-            <td mat-footer-cell *matFooterCellDef class="font-bold">Total</td>
-          </ng-container>
-
-          <!-- Transferencia Column -->
-          <ng-container matColumnDef="transfer">
-            <th mat-header-cell *matHeaderCellDef>Transferencia</th>
-            <td mat-cell *matCellDef="let row" class="font-mono">{{ row.Transferencia | number:'1.0-0' | clp }}</td>
-            <td mat-footer-cell *matFooterCellDef class="font-mono font-bold">
-              {{ totales.Transferencia | number:'1.0-0' | clp }}
-            </td>
-          </ng-container>
-
-          <!-- Ventas Column -->
-          <ng-container matColumnDef="ventas">
-            <th mat-header-cell *matHeaderCellDef>Ventas</th>
-            <td mat-cell *matCellDef="let row" [class.text-red-500]="(row.Ventas || 0) < 0" class="font-mono">
-              {{ (row.Ventas || 0) | number:'1.0-0' | clp }}
-            </td>
-            <td mat-footer-cell *matFooterCellDef class="font-mono font-bold" [class.text-red-500]="(totales.Ventas || 0) < 0">
-              {{ (totales.Ventas || 0) | number:'1.0-0' | clp }}
-            </td>
-          </ng-container>
-
-          <!-- Pagos Column -->
-          <ng-container matColumnDef="pagos">
-            <th mat-header-cell *matHeaderCellDef>Pagos</th>
-            <td mat-cell *matCellDef="let row" [class.text-green-500]="(row.Pagos || 0) > 0" class="font-mono">
-              {{ (row.Pagos || 0) | number:'1.0-0' | clp }}
-            </td>
-            <td mat-footer-cell *matFooterCellDef class="font-mono font-bold" [class.text-green-500]="(totales.Pagos || 0) > 0">
-              {{ (totales.Pagos || 0) | number:'1.0-0' | clp }}
-            </td>
-          </ng-container>
-
-          <!-- Retiros Column -->
-          <ng-container matColumnDef="retiros">
-            <th mat-header-cell *matHeaderCellDef>Retiros</th>
-            <td mat-cell *matCellDef="let row">
-              <div class="flex items-center gap-2">
-                <span [class.text-red-500]="(row.Retiros || 0) < 0" class="font-mono">{{ (row.Retiros || 0) | number:'1.0-0' | clp }}</span>
-                <button mat-icon-button color="primary" 
-                        [disabled]="!row.Saldo || row.Saldo <= 0"
-                        matTooltip="Realizar retiro"
-                        (click)="realizarRetiro(row.Carrera)">
-                  <mat-icon>account_balance_wallet</mat-icon>
-                </button>
-              </div>
-            </td>
-            <td mat-footer-cell *matFooterCellDef class="font-mono font-bold" [class.text-red-500]="(totales.Retiros || 0) < 0">
-              {{ (totales.Retiros || 0) | number:'1.0-0' | clp }}
-            </td>
-          </ng-container>
-
-          <!-- Propinas Column -->
-          <ng-container matColumnDef="propinas">
-            <th mat-header-cell *matHeaderCellDef>Propinas</th>
-            <td mat-cell *matCellDef="let row" [class.text-red-500]="(row.Propinas || 0) < 0" class="font-mono">
-              {{ (row.Propinas || 0) | number:'1.0-0' | clp }}
-            </td>
-            <td mat-footer-cell *matFooterCellDef class="font-mono font-bold" [class.text-red-500]="(totales.Propinas || 0) < 0">
-              {{ (totales.Propinas || 0) | number:'1.0-0' | clp }}
-            </td>
-          </ng-container>
-
-          <!-- Saldo Column -->
-          <ng-container matColumnDef="saldo">
-            <th mat-header-cell *matHeaderCellDef class="saldo-header">Saldo</th>
-            <td mat-cell *matCellDef="let row" class="font-mono saldo-cell">{{ row.Saldo | number:'1.0-0' | clp }}</td>
-            <td mat-footer-cell *matFooterCellDef class="font-mono font-bold saldo-cell">
-              {{ totales.Saldo | number:'1.0-0' | clp }}
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
-        </table>
+      <div class="cliente-info" *ngIf="clienteSeleccionado">
+        <div class="info-grid">
+          <div class="info-section">
+            <h3>Datos Personales</h3>
+            <p><strong>Nombre:</strong> {{ clienteSeleccionado.nombre }}</p>
+            <p><strong>RUT:</strong> {{ clienteSeleccionado.rut }}</p>
+            <p><strong>Teléfono:</strong> {{ clienteSeleccionado.telefono }}</p>
+          </div>
+          <div class="info-section">
+            <h3>Datos Bancarios</h3>
+            <p><strong>Banco:</strong> {{ clienteSeleccionado.banco }}</p>
+            <p><strong>Tipo de Cuenta:</strong> {{ clienteSeleccionado.tipoCuenta }}</p>
+            <p><strong>N° de Cuenta:</strong> {{ clienteSeleccionado.numeroCuenta }}</p>
+          </div>
+        </div>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+
+    <div class="calendar-section">
+      <div class="calendar-container mat-elevation-z4">
+        <mat-calendar 
+          [selected]="fechaSeleccionada"
+          [dateClass]="fechaReunionClass"
+          [dateFilter]="esFechaReunion"
+          (selectedChange)="onFechaChange($event)">
+        </mat-calendar>
+      </div>
+    </div>
+  </div>
+
+  <div class="movimientos-section" *ngIf="clienteSeleccionado && movimientosAgrupados.length > 0">
+    <div class="table-header">
+      <h3>Movimientos del día</h3>
+      <button mat-raised-button color="primary" (click)="abrirDialogoRetiro()" [disabled]="!calcularSaldoDisponible()">
+        Registrar Retiro
+      </button>
+    </div>
+
+    <table mat-table [dataSource]="movimientosAgrupados" class="mat-elevation-z2">
+      <ng-container matColumnDef="carrera">
+        <th mat-header-cell *matHeaderCellDef>Carrera</th>
+        <td mat-cell *matCellDef="let mov">{{ mov.carrera }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="transferencia">
+        <th mat-header-cell *matHeaderCellDef>Transferencia</th>
+        <td mat-cell *matCellDef="let mov" [class.monto-negativo]="mov.transferencia < 0">
+          {{ mov.transferencia | number:'1.0-0' | clp }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="venta">
+        <th mat-header-cell *matHeaderCellDef>Venta</th>
+        <td mat-cell *matCellDef="let mov" [class.monto-negativo]="mov.venta < 0">
+          {{ mov.venta | number:'1.0-0' | clp }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="pago">
+        <th mat-header-cell *matHeaderCellDef>Pago</th>
+        <td mat-cell *matCellDef="let mov" [class.monto-negativo]="mov.pago < 0">
+          {{ mov.pago | number:'1.0-0' | clp }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="retiro">
+        <th mat-header-cell *matHeaderCellDef>Retiro</th>
+        <td mat-cell *matCellDef="let mov" [class.monto-negativo]="mov.retiro < 0">
+          {{ mov.retiro | number:'1.0-0' | clp }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="propina">
+        <th mat-header-cell *matHeaderCellDef>Propina</th>
+        <td mat-cell *matCellDef="let mov" [class.monto-negativo]="mov.propina < 0">
+          {{ mov.propina | number:'1.0-0' | clp }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="saldo">
+        <th mat-header-cell *matHeaderCellDef>Saldo</th>
+        <td mat-cell *matCellDef="let mov" [class.monto-negativo]="mov.saldo < 0">
+          {{ mov.saldo | number:'1.0-0' | clp }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div class="no-movimientos" *ngIf="!movimientosAgrupados.length">
+      No hay movimientos para mostrar en la fecha seleccionada
+    </div>
+  </div>
+
+  <div class="no-data" *ngIf="clienteSeleccionado && movimientosAgrupados.length === 0">
+    No hay movimientos para mostrar en la fecha seleccionada
+  </div>
+
+  <div class="actions" *ngIf="clienteSeleccionado && calcularSaldoDisponible() > 0">
+    <button mat-raised-button color="primary" (click)="abrirDialogoRetiro()">
+      Realizar Retiro
+    </button>
+  </div>
 </div>

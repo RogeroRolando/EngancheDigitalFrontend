@@ -5,20 +5,17 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true
 })
 export class ClpPipe implements PipeTransform {
-  transform(value: number | string | null | undefined): string {
-    if (value === null || value === undefined) {
-      return '$0';
-    }
-
-    // Si el valor ya es una cadena y comienza con $, devolverlo tal cual
-    if (typeof value === 'string' && value.startsWith('$')) {
-      return value;
-    }
-
-    // Convertir a número si es una cadena
-    const numericValue = typeof value === 'string' ? parseFloat(value) : value;
-
-    // Formatear el número como moneda CLP
-    return `$${numericValue}`;
+  transform(value: number | string | null): string {
+    if (value === null) return '$ 0';
+    
+    // Si es string, intentar convertir a número
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    
+    // Si no es un número válido
+    if (isNaN(numValue)) return '$ 0';
+    
+    const formattedNumber = Math.abs(numValue).toLocaleString('es-CL');
+    const sign = numValue < 0 ? '-' : '';
+    return `${sign}$ ${formattedNumber}`;
   }
 }
